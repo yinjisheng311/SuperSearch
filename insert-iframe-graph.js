@@ -1,14 +1,14 @@
 console.log('super search launched');
 
-var main_body_div = document.getElementById("rcnt");
-var graph_div = document.createElement('div');
-graph_div.setAttribute("id", "cy");
-main_body_div.appendChild(graph_div);
+var top_result_bar = document.getElementById("appbar");
+// var graph_div = document.createElement('div');
+// graph_div.setAttribute("id", "cy");
+// main_body_div.appendChild(graph_div);
 
-var download_button = document.createElement("button");
-download_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
-download_button.innerHTML = "whatever";
-main_body_div.appendChild(download_button);
+// var download_button = document.createElement("button");
+// download_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
+// download_button.innerHTML = "whatever";
+// main_body_div.appendChild(download_button);
 
 
 console.log('this is loading');
@@ -20,7 +20,11 @@ if (!location.ancestorOrigins.contains(extensionOrigin)) {
     // node_container_div.appendChild(script3);
     var iframe = document.createElement("iframe");
     iframe.src = chrome.runtime.getURL("/components/iframe-graph/iframe-graph.html");
-    main_body_div.appendChild(iframe);
+    iframe.width = '1000';
+    iframe.height = '200';
+    top_result_bar.insertAdjacentElement("afterend", iframe);
+
+    // top_result_bar.appendChild(iframe);
 }
 console.log('this is loaded');
 

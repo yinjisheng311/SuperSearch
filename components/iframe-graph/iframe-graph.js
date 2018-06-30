@@ -5,25 +5,90 @@
 console.log('loading cytoscape');
 var cy = cytoscape({
 	container: document.getElementById('cy'),
-	elements: [ // list of graph elements to start with
-		{ // node a
-			data: {
-				id: 'a'
+	elements: {
+		nodes: [{
+				data: {
+					id: 'j',
+					name: 'Jerry'
+				}
+			},
+			{
+				data: {
+					id: 'e',
+					name: 'Elaine'
+				}
+			},
+			{
+				data: {
+					id: 'k',
+					name: 'Kramer'
+				}
+			},
+			{
+				data: {
+					id: 'g',
+					name: 'George'
+				}
 			}
-		},
-		{ // node b
-			data: {
-				id: 'b'
+		],
+		edges: [{
+				data: {
+					source: 'j',
+					target: 'e'
+				}
+			},
+			{
+				data: {
+					source: 'j',
+					target: 'k'
+				}
+			},
+			{
+				data: {
+					source: 'j',
+					target: 'g'
+				}
+			},
+			{
+				data: {
+					source: 'e',
+					target: 'j'
+				}
+			},
+			{
+				data: {
+					source: 'e',
+					target: 'k'
+				}
+			},
+			{
+				data: {
+					source: 'k',
+					target: 'j'
+				}
+			},
+			{
+				data: {
+					source: 'k',
+					target: 'e'
+				}
+			},
+			{
+				data: {
+					source: 'k',
+					target: 'g'
+				}
+			},
+			{
+				data: {
+					source: 'g',
+					target: 'j'
+				}
 			}
-		},
-		{ // edge ab
-			data: {
-				id: 'ab',
-				source: 'a',
-				target: 'b'
-			}
-		}
-	],
+		]
+	}
+
+	,
 
 	style: [ // the stylesheet for the graph
 		{
@@ -47,7 +112,7 @@ var cy = cytoscape({
 
 	layout: {
 		name: 'grid',
-		rows: 1
+		rows: 2
 	}
 });
 // cy.on('click', 'node', function(evt) {
