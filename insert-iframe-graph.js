@@ -1,16 +1,12 @@
-console.log('hello');
+console.log('super search launched');
 var main_body_div = document.getElementById("rcnt");
-var iframe_div = document.createElement("iframe");
 var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
-console.log(extensionOrigin);
 if (!location.ancestorOrigins.contains(extensionOrigin)) {
     var iframe = document.createElement('iframe');
+    // iframe.setAttribute("class", "iframe-con");
     // Must be declared at web_accessible_resources in manifest.json
     iframe.src = chrome.runtime.getURL('./components/iframe-graph/iframe-graph.html');
-
+    iframe.style.src = "./components/iframe-graph/iframe-graph.css";
     // Some styles for a fancy sidebar
-    // iframe.style.cssText = 'position:fixed;top:0;left:0;display:block;' +
-    //     'width:300px;height:100%;z-index:1000;';
     main_body_div.appendChild(iframe);
 }
-iframe_div.src = "./components/iframe-graph/iframe-graph.html";
