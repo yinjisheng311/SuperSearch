@@ -7,14 +7,15 @@ chrome.runtime.onMessage.addListener(
             var tab_id = sender.tab.id;
             console.log(request);
             console.log(sender);
-            data = fetch_data(query, links);
-            var message = {
-                query: query,
-                data: data,
-                type: 'return_data'
-            };
-
-            send_return_data(message, tab_id);
+            fetch_data(query, links, function(data){
+                var message = {
+                    query: query,
+                    data: data,
+                    type: 'return_data'
+                };
+                console.log(message);
+                send_return_data(message, tab_id);
+            });
         }
         if (request.type == 'open_network_graph') {
             console.log("sending data to network graph 1");
@@ -97,16 +98,16 @@ var global_links = []
 // function fetch_data(query, links){}
 
 
-function fetch_data(query, links){
+function fetch_data(query, links, _callback){
     // query = "query string that was entered by user"
     // links = ["url1", "url2" ...]
     global_links = links;
-    return scrape_website({}, scrape_website, collation);
+    scrape_website({}, scrape_website, collation, _callback);
 }
 
-function scrape_website(entities_dict, callback_1, callback_2){
+function scrape_website(entities_dict, callback_1, callback_2, callback_3){
     if(global_links.length==0){
-        return callback_2(entities_dict);
+        return callback_2(entities_dict, callback_3);
     }
     url = global_links.pop();
     console.log("scraping website ", url);
@@ -157,14 +158,14 @@ function scrape_website(entities_dict, callback_1, callback_2){
             entities_dict[id]["rel_score"] = weighted_rel;
             entities_dict[id]["con_score"] = entities_dict[id]["con_score"]/freq;
         }
-        callback_1(entities_dict, scrape_website, callback_2);
+        return callback_1(entities_dict, scrape_website, callback_2, callback_3);
     };
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.setRequestHeader("X-TextRazor-key", "ddda20bb2b317510ee16e68556f8ae5e17266dedfb839642fa584639");
     xhttp.send(`url=${url}&extractors=entities`);
 }
 
-function collation(entities_dict){
+function collation(entities_dict, callback_3){
     var sortable = [];
     for (id in entities_dict){
         sortable.push([id, entities_dict[id]]);
@@ -184,6 +185,6 @@ function collation(entities_dict){
     }
 
     console.log(final_5_entities);
-    return final_5_entities;
+    callback_3(final_5_entities);
 }
 
