@@ -76,35 +76,35 @@ var data = null
 function recieve_data_callback(data) {
     // //render G graphs
     // let testJson = [{
-    //     entity: 'neural network',
+    //     entity_name: 'neural network',
     //     frequency: 445,
     //     rel_score: 0.9,
     //     confi_score: 0.8,
     //     overall_score: 0.9,
     //     url: 'https://en.wikipedia.org/wiki/Main_Page'
     // }, {
-    //     entity: 'AlexNet',
+    //     entity_name: 'AlexNet',
     //     frequency: 223,
     //     rel_score: 0.2,
     //     confi_score: 0.8,
     //     overall_score: 0.7,
     //     url: 'https://en.wikipedia.org/wiki/Main_Page'
     // }, {
-    //     entity: 'ResNet',
+    //     entity_name: 'ResNet',
     //     frequency: 112,
     //     rel_score: 0.9,
     //     confi_score: 0.8,
     //     overall_score: 0.6,
     //     url: 'https://en.wikipedia.org/wiki/Main_Page'
     // }, {
-    //     entity: 'Yann LeCun',
+    //     entity_name: 'Yann LeCun',
     //     frequency: 45,
     //     rel_score: 0.9,
     //     confi_score: 0.8,
     //     overall_score: 0.4,
     //     url: 'https://en.wikipedia.org/wiki/Main_Page'
     // }, {
-    //     entity: 'Andrew',
+    //     entity_name: 'Andrew',
     //     frequency: 12,
     //     rel_score: 0.9,
     //     confi_score: 0.8,
@@ -155,7 +155,7 @@ function initialiseGraphs(query) {
 
     // BARCHART CANVAS INITIALISATION
     var barchart_div = document.createElement("div");
-    barchart_div.setAttribute("style", "width:45%; height:100%");
+    barchart_div.setAttribute("style", "width:45%; height:100%; margin-right:3rem;");
 
     var barchart_title = document.createElement("h3");
     barchart_title.innerHTML = "Frequency of Top Keywords";
@@ -169,19 +169,6 @@ function initialiseGraphs(query) {
     bar_chart_canvas.setAttribute("style", "max-height:100% !important; max-width:100% !important;");
     barchart_div.appendChild(bar_chart_canvas);
     container_div.appendChild(barchart_div);
-
-    // POPUP BUTTON
-    var result_stats_bar = document.getElementById("resultStats");
-    var relation_entity_button = document.createElement("button");
-    relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
-    relation_entity_button.innerHTML = "Relationship Graph";
-    relation_entity_button.setAttribute("style", "left:45%;");
-
-    result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
-    relation_entity_button.onclick = function () {
-        open_network_graph(query, data);
-    };
-    top_result_bar.insertAdjacentElement("afterend", relation_entity_button);
 
 
     // GOOGLE TRENDS STUFF
@@ -229,7 +216,21 @@ function initialiseGraphs(query) {
         container_div.appendChild(trendScript);
 
     });
-    showMaterialDialog();
+
+    // HIDES THE DIV
+    var hideContainer_div = document.getElementsByClassName("container");
+    hideContainer_div[0].setAttribute("style", "display:none;");
+
+    // LOADING
+    var loading_div = document.createElement("div");
+    loading_div.setAttribute("style", "width:100%; height:100%; display:flex; align-items:center; justify-content:center;margin-bottom:2rem;");
+    loading_div.setAttribute("class", "loading");
+    var loading = document.createElement("div");
+    loading.setAttribute("class", "mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active");
+    loading_div.appendChild(loading);
+    top_result_bar.insertAdjacentElement("afterend", loading_div);
+    
+    // showMaterialDialog();
 }
 
 function showMaterialDialog() {
@@ -317,7 +318,7 @@ function displayBarChart(json) {
                 layout: {
                     padding: {
                         left: 0,
-                        right: 100,
+                        right: 0,
                         top: 0,
                         bottom: 0
                     }
@@ -331,7 +332,13 @@ function displayBarChart(json) {
                     xAxes: [{
                         gridLines: {
                           color: 'rgba(0, 0, 0, 0)',
-                        }
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            userCallback: function (value, index, values) {
+                              return '';
+                            }
+                          }
                       }],
                       yAxes: [{
                         gridLines: {
@@ -350,6 +357,31 @@ function displayBarChart(json) {
 }
 
 function updateContent(json) {
+    // HIDE LOADING
+    var loading_div = document.getElementsByClassName("loading");
+    loading_div[0].setAttribute("style", "display:none;");
+
+    // UNHIDE CONTAINER
+    var hideContainer_div = document.getElementsByClassName("container");
+    hideContainer_div[0].setAttribute("style", "padding-left:150px; display:flex;margin-bottom:1rem;");
+    
+    // POPUP BUTTON
+    var top_result_bar = document.getElementById("appbar");
+    var relation_entity_button = document.createElement("button");
+    relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
+    relation_entity_button.innerHTML = "Relationship Graph";
+    relation_entity_button.setAttribute("style", "left:150px");
+
+    // result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
+    relation_entity_button.onclick = function () {
+        open_network_graph(query, data);
+    };
+    top_result_bar.insertAdjacentElement("afterend", relation_entity_button);
+
+    // DETECT GOOGLE TRENDS
+    var trends_header = document.getElementsByClassName("embed-header");
+    console.log(trends_header);
+
     console.log(json);
     var keywords_table = document.getElementsByClassName("mdl-data-table mdl-js-data-table mdl-shadow--2dp");
     console.log(keywords_table[0]);
@@ -369,7 +401,7 @@ function updateContent(json) {
 
         var td2 = document.createElement("td");
         td2.setAttribute("class", "mdl-data-table__cell--non-numeric");
-        td2.innerHTML = json[i].overall_score;
+        td2.innerHTML = json[i].overall_score.toFixed(2);
         tr.appendChild(td2);
 
         tbody.appendChild(tr);
