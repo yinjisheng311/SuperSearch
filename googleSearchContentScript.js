@@ -75,7 +75,40 @@ var data = null
 
 function recieve_data_callback(data) {
     //render G graphs
-    return
+    let testJson = [{
+        entity: 'neural network',
+        frequency: 445,
+        rel_score: 0.9,
+        confi_score: 0.8,
+        overall_score: 0.9
+    }, {
+        entity: 'what network',
+        frequency: 223,
+        rel_score: 0.2,
+        confi_score: 0.8,
+        overall_score: 0.7
+    }, {
+        entity: 'ever network',
+        frequency: 112,
+        rel_score: 0.9,
+        confi_score: 0.8,
+        overall_score: 0.6
+    }, {
+        entity: 'ne network',
+        frequency: 45,
+        rel_score: 0.9,
+        confi_score: 0.8,
+        overall_score: 0.4
+    }, {
+        entity: 'w network',
+        frequency: 12,
+        rel_score: 0.9,
+        confi_score: 0.8,
+        overall_score: 0.2
+    }];
+    updateContent(testJson);
+
+    // return
 }
 
 function initialiseGraphs(query) {
@@ -145,22 +178,22 @@ function initialiseGraphs(query) {
 
 function formatJson(json) {
     let labels = [];
-    let data = [];
+    let value = [];
     for (let i = 0; i < json.length; i++) {
         labels.push(json[i].entity);
-        data.push(json[i].frequency);
+        value.push(json[i].frequency);
     }
     let labelsString = '"';
     labelsString += labels.join('","');
     labelsString += '"';
-    return [labelsString, data];
+    return [labelsString, value];
 }
 
 
 function displayBarChart(json) {
     formattedJson = formatJson(json);
     labels = formattedJson[0];
-    data = formattedJson[1];
+    value = formattedJson[1];
     var container_div = document.getElementsByClassName("container");
 
     var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
@@ -175,7 +208,7 @@ function displayBarChart(json) {
                 labels: [` + labels + `],
                 datasets: [{
                     label: 'Frequency',
-                    data: [` + data + `],
+                    data: [` + value + `],
                     backgroundColor: [
                         'rgba(28, 115, 231, 1)',
                         'rgba(28, 115, 231, 0.8)',
@@ -250,6 +283,8 @@ function main() {
         console.log("List of links ====");
         console.log(links);
         console.log("Query:" + query);
+        // TODO: LOADING
+        initialiseGraphs(query);
 
         // listener to render graphs
         chrome.runtime.onMessage.addListener(
@@ -269,7 +304,7 @@ function main() {
         );
 
         send_data(query, links);
-        initialiseGraphs(query);
+        
         let testJson = [{
             entity: 'neural network',
             frequency: 445,
@@ -301,7 +336,6 @@ function main() {
             confi_score: 0.8,
             overall_score: 0.2
         }];
-        updateContent(testJson);
 
     }
 
