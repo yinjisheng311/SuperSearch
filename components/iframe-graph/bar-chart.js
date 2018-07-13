@@ -1,7 +1,7 @@
-console.log('running bar chart');
-var ctx = document.getElementById("barChart").getContext('2d');
-console.log(ctx);
-setTimeout(function () {
+function makeGraph() {
+    console.log('running bar chart');
+    var ctx = document.getElementById("barChart").getContext('2d');
+
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -21,6 +21,15 @@ setTimeout(function () {
             }]
         },
         options: {
+            animation: {
+                onComplete: function (e) {
+                    this.options.animation.onComplete = null;
+                    console.log(e);
+                    let newData = [25, 24, 23, 22, 21, 20];
+                    let newLabel = '';
+                    addData(myChart, newLabel, newData);
+                }
+            },
             scales: {
                 yAxes: [{
                     ticks: {
@@ -30,5 +39,21 @@ setTimeout(function () {
             }
         }
     });
-    console.log('done loading');
-}, 500);
+}
+
+function addData(chart, label, data) {
+    console.log(chart);
+    console.log(label);
+    chart.data.labels.push(label);
+    console.log(chart.data.datasets);
+    for (let i = 0; i < data.length; i ++) {
+        chart.data.datasets[0].data[i] = data[i];
+    }
+    // myLineChart.data.datasets[0].data[2] = 50;
+    console.log(chart.data.datasets);
+    chart.update();
+    
+}
+
+
+makeGraph();
