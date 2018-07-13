@@ -48,11 +48,12 @@ function get_search_query() {
     return document.getElementById('lst-ib').value
 }
 
-function open_network_graph(query) {
+function open_network_graph(query, data) {
     console.log("sent open network graph");
     var message = {
         type: 'open_network_graph',
-        query: query
+        query: query,
+        data: data
     }
     chrome.runtime.sendMessage(message);
 }
@@ -62,15 +63,18 @@ function send_data(query, links) {
     var message = {
         type: 'links',
         query: query,
-        links: links
+        links: links,
     };
     console.log(message);
     chrome.runtime.sendMessage(message);
+
+
 }
 
 var data = null
+
 function recieve_data_callback(data) {
-	//render G graphs
+    //render G graphs
     return
 }
 
@@ -115,7 +119,9 @@ function initialiseGraphs(query) {
     relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
     result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
 
-    relation_entity_button.onclick = function(){open_network_graph(query);};
+    relation_entity_button.onclick = function() {
+        open_network_graph(query, data);
+    };
 }
 
 function formatJson(json) {
@@ -216,7 +222,6 @@ function main() {
         var links = scrape_search_results();
         var query = get_search_query();
 
-        //
         console.log("List of links ====");
         console.log(links);
         console.log("Query:" + query);
@@ -224,13 +229,16 @@ function main() {
         // listener to render graphs
         chrome.runtime.onMessage.addListener(
             function(request, sender, sendResponse) {
-				if (request.type == 'return_data' && request.query == query){
-					data = request.data;	
-					recieve_data_callback(data);
-					sendResponse({
-						status:true
-					});
-				}
+                console.log(request);
+                if (request.type == 'return_data' && request.query == query) {
+                    console.log("GOT RETURN DATA");
+                    console.log(request.data);
+                    data = request.data;
+                    recieve_data_callback(data);
+                    sendResponse({
+                        status: true
+                    });
+                }
                 return true;
             }
         );
@@ -278,7 +286,7 @@ function loadScript(url, callback) {
     var script = document.createElement("script")
     script.type = "text/javascript";
     if (script.readyState) { //IE
-        script.onreadystatechange = function () {
+        script.onreadystatechange = function() {
             if (script.readyState == "loaded" ||
                 script.readyState == "complete") {
                 script.onreadystatechange = null;
@@ -286,7 +294,7 @@ function loadScript(url, callback) {
             }
         };
     } else { //Others
-        script.onload = function () {
+        script.onload = function() {
             callback();
         };
     }
@@ -296,7 +304,7 @@ function loadScript(url, callback) {
 var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
 if (!location.ancestorOrigins.contains(extensionOrigin)) {
 
-    loadScript(chrome.runtime.getURL("Chart.js"), function () {
+    loadScript(chrome.runtime.getURL("Chart.js"), function() {
         //initialization code
         console.log('done');
         main();
