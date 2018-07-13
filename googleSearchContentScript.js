@@ -49,21 +49,41 @@ function get_search_query() {
 }
 
 
-function insert_analysis_iframe(query) {
+function insert_analysis_chart() {
     // TODO This function will wait for data response from api script 
+    console.log('inserting bar charts');
     var top_result_bar = document.getElementById("appbar");
 
-    console.log('inserting iframe');
+    var container_div = document.createElement("div");
+    container_div.setAttribute("class", "container");
+    container_div.setAttribute("style", "padding-left:150px; display:flex;");
+    var top_keywords_div = document.createElement("div");
+    top_keywords_div.setAttribute("class", "keywords-container");
+    top_keywords_div.setAttribute("style", "max-width:20%");
+    var header_h4 = document.createElement("h4");
+    header_h4.innerHTML = "Top 5 Occurring Keywords";
+    var each_keywords_h5 = document.createElement("h5");
+    each_keywords_h5.innerHTML = "Whatever";
+    top_keywords_div.appendChild(header_h4);
+    top_keywords_div.appendChild(each_keywords_h5);
+    container_div.appendChild(top_keywords_div);
+
+    var bar_chart_canvas = document.createElement("canvas");
+    bar_chart_canvas.setAttribute("id", "barChart");
+    bar_chart_canvas.setAttribute("style", "max-width:60%; max-height:50%")
+    container_div.appendChild(bar_chart_canvas);
+
+    top_result_bar.insertAdjacentElement("afterend", container_div);
+
     var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
     if (!location.ancestorOrigins.contains(extensionOrigin)) {
-        var iframe = document.createElement("iframe");
-        iframe.src = chrome.runtime.getURL("/components/iframe-graph/iframe-graph.html");
-        iframe.width = '1000';
-        iframe.height = '200';
-        iframe.className = '.super_iframe';
-        top_result_bar.insertAdjacentElement("afterend", iframe);
+        var script3 = document.createElement("script");
+        script3.src = chrome.runtime.getURL("/components/iframe-graph/bar-chart.js");
+        container_div.insertAdjacentElement("afterend", script3);
     }
-    console.log('inserting graph button');
+    console.log('done inserting bar charts');
+
+    // // console.log('inserting graph button');
     var result_stats_bar = document.getElementById("resultStats");
     var download_button = document.createElement("button");
 
@@ -122,9 +142,8 @@ function main() {
         chrome.runtime.onMessage.addListener(recieve_data_callback);
 
         send_data(query, links);
-        insert_analysis_iframe(query);
+        insert_analysis_chart(query);
 
-        //recieve data callback
     }
 }
 
