@@ -69,8 +69,9 @@ function send_data(query, links) {
 }
 
 var data = null
+
 function recieve_data_callback(data) {
-	//render G graphs
+    //render G graphs
     return
 }
 
@@ -79,13 +80,20 @@ function initialiseGraphs(query) {
 
     var container_div = document.createElement("div");
     container_div.setAttribute("class", "container");
-    container_div.setAttribute("style", "padding-left:150px; display:flex; align-items:center; justify-content:space-between;");
+    container_div.setAttribute("style", "padding-left:150px; display:flex;margin-bottom:1rem;");
 
-    // var top_keywords_div = document.createElement("div");
-    // top_keywords_div.setAttribute("class", "keywords-container");
+    // TOP KEYWORDS DIV
+    var top_keywords_div = document.createElement("div");
+    top_keywords_div.setAttribute("class", "keywords-container");
+
+    var top_keywords_title = document.createElement("h3");
+    top_keywords_title.innerHTML = "Top 5 Relevant Keywords";
+    top_keywords_title.setAttribute("style", "font-size:18px;margin-bottom:0;");
+    top_keywords_div.appendChild(top_keywords_title);
 
     var keywords_table = document.createElement("table");
     keywords_table.setAttribute("class", "mdl-data-table mdl-js-data-table mdl-shadow--2dp");
+    keywords_table.setAttribute("style", "margin-right:5rem;")
     var thead = document.createElement("thead");
     keywords_table.appendChild(thead);
     var tr = document.createElement("tr");
@@ -98,24 +106,38 @@ function initialiseGraphs(query) {
     th2.setAttribute("style", "mdl-data-table__cell--non-numeric");
     th2.innerHTML = "Score";
     tr.appendChild(th2);
+    top_keywords_div.appendChild(keywords_table);
+    container_div.appendChild(top_keywords_div);
 
-    container_div.appendChild(keywords_table);
+    // BARCHART CANVAS INITIALISATION
+    var barchart_div = document.createElement("div");
+    barchart_div.setAttribute("style", "width:100%; height:100%");
+
+    var barchart_title = document.createElement("h3");
+    barchart_title.innerHTML = "Frequency of Top Keywords";
+    barchart_title.setAttribute("style", "font-size:18px;margin-bottom:1rem;");
+    barchart_div.appendChild(barchart_title);
 
     var bar_chart_canvas = document.createElement("canvas");
     bar_chart_canvas.setAttribute("id", "barChart");
-    bar_chart_canvas.setAttribute("style", "max-width:40%; max-height:20%");
-    container_div.appendChild(bar_chart_canvas);
+    bar_chart_canvas.setAttribute("style", "max-height:70%; max-width:70%;");
+    barchart_div.appendChild(bar_chart_canvas);
+    container_div.appendChild(barchart_div);
+
     top_result_bar.insertAdjacentElement("afterend", container_div);
+    // bar_chart_canvas.insertAdjacentElement("beforeBegin", barchart_title);
+    
+    // POPUP BUTTON
     var result_stats_bar = document.getElementById("resultStats");
     var relation_entity_button = document.createElement("button");
-
-
     relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
     relation_entity_button.innerHTML = "Relationship Graph";
     relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
     result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
 
-    relation_entity_button.onclick = function(){open_network_graph(query);};
+    relation_entity_button.onclick = function () {
+        open_network_graph(query);
+    };
 }
 
 function formatJson(json) {
@@ -125,19 +147,17 @@ function formatJson(json) {
         labels.push(json[i].entity);
         data.push(json[i].frequency);
     }
-    console.log(labels);
-    console.log(data);
-    return [labels, data];
+    let labelsString = '"';
+    labelsString += labels.join('","');
+    labelsString += '"';
+    return [labelsString, data];
 }
 
 
 function displayBarChart(json) {
     formattedJson = formatJson(json);
     labels = formattedJson[0];
-    console.log(labels);
     data = formattedJson[1];
-    console.log(data);
-    console.log('loading barchart.js');
     var container_div = document.getElementsByClassName("container");
 
     var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
@@ -145,13 +165,13 @@ function displayBarChart(json) {
         var script3 = document.createElement("script");
         script3.innerHTML = `console.log('running bar chart ');
         var ctx = document.getElementById("barChart").getContext('2d');
-
+        Chart.defaults.global.legend.display = false;
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: [` + data + `],
+                labels: [` + labels + `],
                 datasets: [{
-                    label: '# of Votes',
+                    label: 'Frequency',
                     data: [` + data + `],
                     backgroundColor: [
                         'rgba(28, 115, 231, 1)',
@@ -171,11 +191,19 @@ function displayBarChart(json) {
                     }
                 },
                 scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
+                    xAxes: [{
+                        gridLines: {
+                          color: 'rgba(0, 0, 0, 0)',
                         }
-                    }]
+                      }],
+                      yAxes: [{
+                        gridLines: {
+                          color: 'rgba(0, 0, 0, 0)',
+                        },
+                        ticks: {
+                          beginAtZero: true,
+                        }
+                      }]
                 }
             }
         });`;
@@ -223,14 +251,14 @@ function main() {
 
         // listener to render graphs
         chrome.runtime.onMessage.addListener(
-            function(request, sender, sendResponse) {
-				if (request.type == 'return_data' && request.query == query){
-					data = request.data;	
-					recieve_data_callback(data);
-					sendResponse({
-						status:true
-					});
-				}
+            function (request, sender, sendResponse) {
+                if (request.type == 'return_data' && request.query == query) {
+                    data = request.data;
+                    recieve_data_callback(data);
+                    sendResponse({
+                        status: true
+                    });
+                }
                 return true;
             }
         );
@@ -239,31 +267,31 @@ function main() {
         initialiseGraphs(query);
         let testJson = [{
             entity: 'neural network',
-            frequency: 123,
+            frequency: 445,
             rel_score: 0.9,
             confi_score: 0.8,
             overall_score: 0.9
         }, {
             entity: 'what network',
-            frequency: 123,
+            frequency: 223,
             rel_score: 0.2,
             confi_score: 0.8,
             overall_score: 0.7
         }, {
             entity: 'ever network',
-            frequency: 123,
+            frequency: 112,
             rel_score: 0.9,
             confi_score: 0.8,
             overall_score: 0.6
         }, {
             entity: 'ne network',
-            frequency: 123,
+            frequency: 45,
             rel_score: 0.9,
             confi_score: 0.8,
             overall_score: 0.4
         }, {
             entity: 'w network',
-            frequency: 123,
+            frequency: 12,
             rel_score: 0.9,
             confi_score: 0.8,
             overall_score: 0.2
