@@ -1,22 +1,36 @@
 {
-  "manifest_version": 2,
-  "name": "Super Search",
-  "description": "Know what you search and help you get to what you want to know faster",
-  "version": "1.0",
-  "content_scripts": [{
-    "css": ["/components/iframe-graph/iframe-graph.css", "styles.css"],
-    "js": ["materialdesign.js","insert-iframe-graph.js"],
-    "matches": ["https://google.com.sg/search*", "https://www.google.com/search*"]
-  }],
-  "permissions": [],
-  "content_security_policy": "script-src 'self' 'unsafe-eval';object-src 'self'",
-  "web_accessible_resources": [
-    "assets/css/*",
-    "assets/js/*",
-    "assets/fonts/*",
-    "*.svg",
-    "*.SVG",
-    "cytoscape.js",
-    "*/iframe-graph.html"
-  ]
+    "manifest_version": 2,
+    "name": "Super Search",
+    "description": "Know what you search and help you get to what you want to know faster",
+    "version": "1.0",
+    //    "content_scripts": [{
+    //        "css": ["/components/iframe-graph/iframe-graph.css", "styles.css"],
+    //        "js": ["materialdesign.js", "insert-iframe-graph.js"],
+    //        "matches": ["https://google.com.sg/search*", "https://www.google.com/search*"]
+    //    }],
+    "background": {
+        "scripts": [
+            "background.js",
+            "backend_api_caller.js"
+        ]
+    },
+    "permissions": [
+        "webNavigation",
+        "activeTab",
+        "tabs",
+        "http://*/*",
+        "https://*/*"
+
+    ],
+    "content_security_policy": "script-src 'self' 'unsafe-eval';object-src 'self'",
+    "web_accessible_resources": [
+        "assets/css/*",
+        "assets/js/*",
+        "assets/fonts/*",
+        "*.svg",
+        "*.SVG",
+        "cytoscape.js",
+        "*/iframe-graph.html",
+		"styles.css"
+    ]
 }
