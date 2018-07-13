@@ -74,44 +74,44 @@ function send_data(query, links) {
 var data = null
 
 function recieve_data_callback(data) {
-    //render G graphs
-    let testJson = [{
-        entity: 'neural network',
-        frequency: 445,
-        rel_score: 0.9,
-        confi_score: 0.8,
-        overall_score: 0.9,
-        url: 'https://en.wikipedia.org/wiki/Main_Page'
-    }, {
-        entity: 'AlexNet',
-        frequency: 223,
-        rel_score: 0.2,
-        confi_score: 0.8,
-        overall_score: 0.7,
-        url: 'https://en.wikipedia.org/wiki/Main_Page'
-    }, {
-        entity: 'ResNet',
-        frequency: 112,
-        rel_score: 0.9,
-        confi_score: 0.8,
-        overall_score: 0.6,
-        url: 'https://en.wikipedia.org/wiki/Main_Page'
-    }, {
-        entity: 'Yann LeCun',
-        frequency: 45,
-        rel_score: 0.9,
-        confi_score: 0.8,
-        overall_score: 0.4,
-        url: 'https://en.wikipedia.org/wiki/Main_Page'
-    }, {
-        entity: 'Andrew',
-        frequency: 12,
-        rel_score: 0.9,
-        confi_score: 0.8,
-        overall_score: 0.2,
-        url: 'https://en.wikipedia.org/wiki/Main_Page'
-    }];
-    updateContent(testJson);
+    // //render G graphs
+    // let testJson = [{
+    //     entity: 'neural network',
+    //     frequency: 445,
+    //     rel_score: 0.9,
+    //     confi_score: 0.8,
+    //     overall_score: 0.9,
+    //     url: 'https://en.wikipedia.org/wiki/Main_Page'
+    // }, {
+    //     entity: 'AlexNet',
+    //     frequency: 223,
+    //     rel_score: 0.2,
+    //     confi_score: 0.8,
+    //     overall_score: 0.7,
+    //     url: 'https://en.wikipedia.org/wiki/Main_Page'
+    // }, {
+    //     entity: 'ResNet',
+    //     frequency: 112,
+    //     rel_score: 0.9,
+    //     confi_score: 0.8,
+    //     overall_score: 0.6,
+    //     url: 'https://en.wikipedia.org/wiki/Main_Page'
+    // }, {
+    //     entity: 'Yann LeCun',
+    //     frequency: 45,
+    //     rel_score: 0.9,
+    //     confi_score: 0.8,
+    //     overall_score: 0.4,
+    //     url: 'https://en.wikipedia.org/wiki/Main_Page'
+    // }, {
+    //     entity: 'Andrew',
+    //     frequency: 12,
+    //     rel_score: 0.9,
+    //     confi_score: 0.8,
+    //     overall_score: 0.2,
+    //     url: 'https://en.wikipedia.org/wiki/Main_Page'
+    // }];
+    updateContent(data);
 
     // return
 }
@@ -229,17 +229,52 @@ function initialiseGraphs(query) {
         container_div.appendChild(trendScript);
 
     });
+    showMaterialDialog();
+}
 
-
-
+function showMaterialDialog() {
+    var container = document.getElementsByClassName("container");
+    var body = document.createElement("body");
+    body.innerHTML = `
+    <button id="show-dialog" type="button" class="mdl-button">Show Dialog</button>
+    <dialog class="mdl-dialog">
+      <h4 class="mdl-dialog__title">Allow data collection?</h4>
+      <div class="mdl-dialog__content">
+        <p>
+          Allowing us to collect data will let us get you the information you want faster.
+        </p>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button">Agree</button>
+        <button type="button" class="mdl-button close">Disagree</button>
+      </div>
+    </dialog>
+    `;
+    var bodyScript = document.createElement("script");
+    bodyScript.innerHTML = `
+      var dialog = document.querySelector('dialog');
+      var showDialogButton = document.querySelector('#show-dialog');
+      if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+      }
+      showDialogButton.addEventListener('click', function() {
+        dialog.showModal();
+      });
+      dialog.querySelector('.close').addEventListener('click', function() {
+        dialog.close();
+      });
+    `;
+    body.appendChild(bodyScript);
+    container[0].insertAdjacentElement("afterend", body);
 
 }
+
 
 function formatJson(json) {
     let labels = [];
     let value = [];
     for (let i = 0; i < json.length; i++) {
-        labels.push(json[i].entity);
+        labels.push(json[i].entity_name);
         value.push(json[i].frequency);
     }
     let labelsString = '"';
@@ -325,8 +360,8 @@ function updateContent(json) {
         var td = document.createElement("td");
         td.setAttribute("class", "mdl-data-table__cell--non-numeric");
         var a = document.createElement("a");
-        a.innerHTML = json[i]['entity'];
-        a.href = json[i]['url'];
+        a.innerHTML = json[i].entity_name;
+        a.href = json[i].url;
         a.target = '_blank';
         td.appendChild(a);
         // td.innerHTML = json[i]['entity'];
@@ -334,7 +369,7 @@ function updateContent(json) {
 
         var td2 = document.createElement("td");
         td2.setAttribute("class", "mdl-data-table__cell--non-numeric");
-        td2.innerHTML = json[i]['overall_score'];
+        td2.innerHTML = json[i].overall_score;
         tr.appendChild(td2);
 
         tbody.appendChild(tr);
