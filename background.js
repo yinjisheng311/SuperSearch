@@ -9,7 +9,7 @@ chrome.webNavigation.onDOMContentLoaded.addListener(
     function(details) {
         // inject content script which checks if it is a valid google search page
         chrome.tabs.executeScript({
-                file: 'materialdesign.js'
+                file: 'libraries.js'
             },
             function() {
                 chrome.tabs.executeScript({

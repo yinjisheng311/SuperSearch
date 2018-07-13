@@ -26,6 +26,9 @@
     "*.SVG",
     "cytoscape.js",
     "*/iframe-graph.html",
+    "*/bar-chart.js",
+    "Chart.js",
+    "require.js",
     "styles.css"
   ]
 
