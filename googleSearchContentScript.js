@@ -49,7 +49,7 @@ function get_search_query() {
 }
 
 
-function insert_analysis_chart() {
+function insert_analysis_chart(query) {
     // TODO This function will wait for data response from api script 
     console.log('inserting bar charts');
     var top_result_bar = document.getElementById("appbar");
@@ -97,8 +97,7 @@ function insert_analysis_chart() {
     download_button.appendChild(versions_icon);
     result_stats_bar.insertAdjacentElement("afterend", download_button);
 
-     download_button.onclick = function(){open_network_graph(query);};
-    //    download_button.addEventListener("click", open_network_graph(query);
+    download_button.onclick = function(){open_network_graph(query);};
 }
 
 
