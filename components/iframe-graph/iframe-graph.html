@@ -9,13 +9,39 @@
         height: 100vh;
         display: block;
     }
+
+    div.container {
+        width: 100vw;
+        display: flex;
+    }
+
+    div.top-keywords {
+        width: 50vw;
+    }
+
+    canvas {
+        width: 50vw;
+        height: 40vh;
+    }
 </style>
 
 <body>
-    <div id="cy">
+    <div class="container">
+        <div class="top-keywords">
+            <h4>Top 5 Occurring Keywords</h4>
+            <span>1. Whatever</span>
+            <span>2. Whatever</span>
+            <span>3. Whatever</span>
+            <span>4. Whatever</span>
+            <span>5. Whatever</span>
+        </div>
+        <canvas id="barChart" width="400" height="200"></canvas>
     </div>
     <script src="../../cytoscape.js"></script>
-    <script src="iframe-graph.js"></script>
+    <!-- <script src="iframe-graph.js"></script> -->
+    <script src="../../Chart.js"></script>
+    <script src="bar-chart.js"></script>
+
 </body>
 
 </html>
