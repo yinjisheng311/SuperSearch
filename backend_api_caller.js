@@ -4,14 +4,38 @@ chrome.runtime.onMessage.addListener(
         if (request.type == 'links') {
             var links = request.links;
             var query = request.query;
+            var tab_id = sender.tab.id;
             console.log(request);
             console.log(sender);
-            fetch_data(query, links);
+            data = fetch_data(query, links);
+            var message = {
+                query: query,
+                data: data,
+                type: 'return_data'
+            };
+
+            send_return_data(message, tab_id);
         }
         if (request.type == 'open_network_graph') {
+            console.log("sending data to network graph 1");
+            console.log(request);
             open_network_graph_popup(request.query, request.data);
         }
     });
+
+
+function send_return_data(message, tab_id) {
+    chrome.tabs.sendMessage(tab_id, message, function(response) {
+        if (response && response.status) {} else {
+            setTimeout(function() {
+                console.log(tab.id)
+                console.log(chrome.runtime.lastError);
+                console.log(response);
+                send_return_data(message, tab_id);
+            }, 500);
+        }
+    });
+}
 
 
 function scrape_url(url) {
@@ -28,6 +52,8 @@ function scrape_url(url) {
 }
 
 function open_network_graph_popup(query, data) {
+    console.log("sending data to network graph 2");
+    console.log(data);
     graph_url = chrome.runtime.getURL('network_graph.html')
     console.log("recieve open network graph command");
     console.log(graph_url);
@@ -47,7 +73,7 @@ function send_init_data(windows, query, data) {
     var message = {
         type: 'network_graph_data',
         query: query,
-        data: '555'      //replace with data: data
+        data: data
     };
 
 
@@ -57,12 +83,13 @@ function send_init_data(windows, query, data) {
                 console.log(tab.id)
                 console.log(chrome.runtime.lastError);
                 console.log(response);
-                send_init_data(windows, query);
+                send_init_data(windows, query, data);
             }, 500);
         }
     });
 }
 
 function fetch_data(query, links) {
+    return links;
     // NIC INSERT UR CODE HERE
 }
