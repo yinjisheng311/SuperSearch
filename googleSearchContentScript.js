@@ -49,7 +49,7 @@ function get_search_query() {
 }
 
 
-function insert_analysis_iframe() {
+function insert_analysis_iframe(query) {
     // TODO This function will wait for data response from api script 
     var top_result_bar = document.getElementById("appbar");
 
@@ -77,6 +77,34 @@ function insert_analysis_iframe() {
     download_button.appendChild(versions_icon);
     result_stats_bar.insertAdjacentElement("afterend", download_button);
 
+     download_button.onclick = function(){open_network_graph(query);};
+    //    download_button.addEventListener("click", open_network_graph(query);
+}
+
+
+function open_network_graph(query) {
+    console.log("sent open network graph");
+    var message = {
+        type: 'open_network_graph',
+        query: query
+    }
+    chrome.runtime.sendMessage(message);
+}
+
+
+function send_data(query, links) {
+    var message = {
+        type: 'links',
+        query: query,
+        links: links
+    };
+    console.log(message);
+    chrome.runtime.sendMessage(message);
+}
+
+
+function recieve_data_callback() {
+    return
 }
 
 
@@ -85,19 +113,18 @@ function main() {
         var links = scrape_search_results();
         var query = get_search_query();
 
+        //
         console.log("List of links ====");
         console.log(links);
         console.log("Query:" + query)
-        // send to background.js
 
-        var message = {
-            type: 'links',
-            query: query,
-            links: links
-        };
-        console.log(message);
-        chrome.runtime.sendMessage(message);
-        insert_analysis_iframe()
+        // listener to render graphs
+        chrome.runtime.onMessage.addListener(recieve_data_callback);
+
+        send_data(query, links);
+        insert_analysis_iframe(query);
+
+        //recieve data callback
     }
 }
 
