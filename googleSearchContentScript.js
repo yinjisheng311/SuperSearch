@@ -150,9 +150,10 @@ function initialiseGraphs(query) {
     top_keywords_div.appendChild(keywords_table);
     container_div.appendChild(top_keywords_div);
 
+
     // BARCHART CANVAS INITIALISATION
     var barchart_div = document.createElement("div");
-    barchart_div.setAttribute("style", "width:100%; height:100%");
+    barchart_div.setAttribute("style", "width:45%; height:100%");
 
     var barchart_title = document.createElement("h3");
     barchart_title.innerHTML = "Frequency of Top Keywords";
@@ -161,24 +162,97 @@ function initialiseGraphs(query) {
 
     var bar_chart_canvas = document.createElement("canvas");
     bar_chart_canvas.setAttribute("id", "barChart");
-    bar_chart_canvas.setAttribute("style", "max-height:70%; max-width:70%;");
+    bar_chart_canvas.setAttribute("style", "max-height:100% !important; max-width:100% !important;");
     barchart_div.appendChild(bar_chart_canvas);
     container_div.appendChild(barchart_div);
 
+        
+    // GOOGLE TRENDS STUFF
+    var trends_div = document.createElement("div");
+    trends_div.setAttribute("id", "trends");
+    trends_div.setAttribute("style", "width:25%; margin-right:4rem;");
+    var trends_title = document.createElement("h3");
+    trends_title.innerHTML = "Interest over Time";
+    trends_title.setAttribute("style", "font-size:18px;margin-bottom:0rem;");
+    trends_div.appendChild(trends_title);
+    container_div.appendChild(trends_div);
     top_result_bar.insertAdjacentElement("afterend", container_div);
-    // bar_chart_canvas.insertAdjacentElement("beforeBegin", barchart_title);
-    
-    // POPUP BUTTON
-    var result_stats_bar = document.getElementById("resultStats");
-    var relation_entity_button = document.createElement("button");
-    relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
-    relation_entity_button.innerHTML = "Relationship Graph";
-    relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
-    result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
 
-    relation_entity_button.onclick = function() {
-        open_network_graph(query, data);
-    };
+    loadScript("https://ssl.gstatic.com/trends_nrtr/1480_RC02/embed_loader.js", function () {
+        //initialization code
+        var trendStyle = document.createElement("style");
+        trendStyle.innerHTML = `
+            div.embed-footer {
+                display:none !important;
+            }
+            div.embed-header {
+                display:none !important;
+            }
+        `;
+        container_div.appendChild(trendStyle);
+        var trendScript = document.createElement("script");
+        trendScript.type = "text/javascript";
+        trendScript.innerHTML = `
+        var divElem = document.getElementById('trends');
+        trends.embed.renderExploreWidgetTo(divElem, "TIMESERIES", {
+            "comparisonItem": [{
+                "keyword": " `+ query + `",
+                "geo": "",
+                "time": "today 12-m"
+            }],
+            "category": 0,
+            "property": ""
+        }, {
+            "exploreQuery": "q=neural%20network&geo=US&date=today 12-m",
+            "guestPath": "https://trends.google.com:443/trends/embed/"
+        });
+        var header = document.getElementsByClassName("embed-header");
+        console.log(header[0]);
+        header[0].setAttribute("style", "display:none !important;");
+        `;
+        container_div.appendChild(trendScript);
+
+    });
+    // var sslScript = document.createElement("script");
+    // sslScript.type = "text/javascript";
+    // sslScript.src = "https://ssl.gstatic.com/trends_nrtr/1480_RC02/embed_loader.js";
+    // container_div.appendChild(sslScript);
+
+    // var realScript = document.createElement("script");
+    // realScript.type = "text/javascript";
+    // realScript.innerHTML = `
+    // trends.embed.renderExploreWidget("TIMESERIES", {
+    //     "comparisonItem": [{
+    //         "keyword": "neural network",
+    //         "geo": "US",
+    //         "time": "today 12-m"
+    //     }],
+    //     "category": 0,
+    //     "property": ""
+    // }, {
+    //     "exploreQuery": "q=neural%20network&geo=US&date=today 12-m",
+    //     "guestPath": "https://trends.google.com:443/trends/embed/"
+    // });
+    // `;
+    // container_div.appendChild(realScript);
+
+
+
+    // bar_chart_canvas.insertAdjacentElement("beforeBegin", barchart_title);
+
+    // POPUP BUTTON
+    // var result_stats_bar = document.getElementById("resultStats");
+    // var relation_entity_button = document.createElement("button");
+    // relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
+    // relation_entity_button.innerHTML = "Relationship Graph";
+    // relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
+    // result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
+
+    // relation_entity_button.onclick = function () {
+    //     open_network_graph(query, data);
+    // };
+
+
 }
 
 function formatJson(json) {
@@ -220,15 +294,22 @@ function displayBarChart(json) {
                         'rgba(28, 115, 231, 0.6)',
                         'rgba(28, 115, 231, 0.4)',
                         'rgba(28, 115, 231, 0.2)',
-                        'rgba(28, 115, 231, 0.1)',
                     ],
                     borderWidth: 1
                 }]
             },
             options: {
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 100,
+                        top: 0,
+                        bottom: 0
+                    }
+                },
                 animation: {
                     onComplete: function (e) {
-                        console.log(e);
+                        // console.log(e);
                     }
                 },
                 scales: {
@@ -289,7 +370,7 @@ function main() {
     if (is_page_at_google_all_menu()) {
         var links = scrape_search_results();
         var query = get_search_query();
-
+        console.log(query);
         console.log("List of links ====");
         console.log(links);
         console.log("Query:" + query);
@@ -298,7 +379,7 @@ function main() {
 
         // listener to render graphs
         chrome.runtime.onMessage.addListener(
-            function(request, sender, sendResponse) {
+            function (request, sender, sendResponse) {
                 console.log(request);
                 if (request.type == 'return_data' && request.query == query) {
                     console.log("GOT RETURN DATA");
@@ -321,7 +402,7 @@ function loadScript(url, callback) {
     var script = document.createElement("script")
     script.type = "text/javascript";
     if (script.readyState) { //IE
-        script.onreadystatechange = function() {
+        script.onreadystatechange = function () {
             if (script.readyState == "loaded" ||
                 script.readyState == "complete") {
                 script.onreadystatechange = null;
@@ -329,7 +410,7 @@ function loadScript(url, callback) {
             }
         };
     } else { //Others
-        script.onload = function() {
+        script.onload = function () {
             callback();
         };
     }
@@ -339,7 +420,7 @@ function loadScript(url, callback) {
 var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
 if (!location.ancestorOrigins.contains(extensionOrigin)) {
 
-    loadScript(chrome.runtime.getURL("Chart.js"), function() {
+    loadScript(chrome.runtime.getURL("Chart.js"), function () {
         //initialization code
         console.log('done');
         main();
