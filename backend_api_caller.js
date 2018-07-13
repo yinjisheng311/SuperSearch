@@ -4,12 +4,21 @@ chrome.runtime.onMessage.addListener(
         if (request.type == 'links') {
             var links = request.links;
             var query = request.query;
+            var tab_id = request.tab_id
             console.log(request);
             console.log(sender);
-            fetch_data(query, links);
+            data = fetch_data(query, links);
+            var message = {
+                query: query,
+                data: data,
+                type: 'return_data'
+            };
+            chrome.tabs.sendMessage(tab_id, message);
+
         }
         if (request.type == 'open_network_graph') {
             open_network_graph_popup(request.query, request.data);
+            chrome.run
         }
     });
 
@@ -47,7 +56,7 @@ function send_init_data(windows, query, data) {
     var message = {
         type: 'network_graph_data',
         query: query,
-        data: '555'      //replace with data: data
+        data: '555' //replace with data: data
     };
 
 
