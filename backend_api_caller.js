@@ -6,6 +6,7 @@ chrome.runtime.onMessage.addListener(
             var query = request.query;
             console.log(request);
             console.log(sender);
+			fetch_data(query,links);			
             //scrape_url(links[0])
         }
         if (request.type == 'open_network_graph') {
@@ -32,21 +33,48 @@ function open_network_graph_popup(query) {
     console.log("recieve open network graph command");
     console.log(graph_url);
     chrome.windows.create({
-        url: [graph_url],
-        type: "popup",
-        state: 'normal'
-    }, 
-	function(windows){
-		execute_script_in_popup(windows, query);
-	}
-	); //callback needed?
+            url: [graph_url],
+            type: "popup",
+            state: 'normal'
+        },
+        function(windows) {
+            var message = {
+                type: 'network_graph_data',
+                query: query,
+                data: '555'
+            };
+            chrome.runtime.sendMessage(message);
+            //execute_script_in_popup(windows, query);
+        }
+    ); //callback needed?
 }
 
-function execute_script_in_popup(windows, query){
-	tab = windows.tab[0];
+function execute_script_in_popup(windows, query) {
+    //tab = windows.tab[0];
+    console.log(windows);
+    tab_id = windows.tabs[0].id;
+    chrome.tabs.executeScript(
+        tab_id, {
+            // add listener
+            file: 'network_graph.js'
+        },
+        function() {
+            // send message 
+            var message = {
+                type: 'network_graph_data',
+                query: query,
+                data: '555'
+            };
+            chrome.runtime.sendMessage(message);
+        });
 
 }
+
 function get_data(query, links) {
     //TODO check if query is cached
     //TODO api calls here
+}
+
+function fetch_data(query, links){
+// NIC INSERT UR CODE HERE
 }

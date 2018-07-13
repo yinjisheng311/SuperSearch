@@ -28,7 +28,9 @@
     "*/iframe-graph.html",
     "*/bar-chart.js",
     "Chart.js",
-    "require.js"
+    "require.js",
+	"network_graph.js"
+
   ]
 
 }
