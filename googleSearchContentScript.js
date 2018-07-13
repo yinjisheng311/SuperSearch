@@ -80,31 +80,36 @@ function recieve_data_callback(data) {
         frequency: 445,
         rel_score: 0.9,
         confi_score: 0.8,
-        overall_score: 0.9
+        overall_score: 0.9,
+        url: 'https://en.wikipedia.org/wiki/Main_Page'
     }, {
-        entity: 'what network',
+        entity: 'AlexNet',
         frequency: 223,
         rel_score: 0.2,
         confi_score: 0.8,
-        overall_score: 0.7
+        overall_score: 0.7,
+        url: 'https://en.wikipedia.org/wiki/Main_Page'
     }, {
-        entity: 'ever network',
+        entity: 'ResNet',
         frequency: 112,
         rel_score: 0.9,
         confi_score: 0.8,
-        overall_score: 0.6
+        overall_score: 0.6,
+        url: 'https://en.wikipedia.org/wiki/Main_Page'
     }, {
-        entity: 'ne network',
+        entity: 'Yann LeCun',
         frequency: 45,
         rel_score: 0.9,
         confi_score: 0.8,
-        overall_score: 0.4
+        overall_score: 0.4,
+        url: 'https://en.wikipedia.org/wiki/Main_Page'
     }, {
-        entity: 'w network',
+        entity: 'Andrew',
         frequency: 12,
         rel_score: 0.9,
         confi_score: 0.8,
-        overall_score: 0.2
+        overall_score: 0.2,
+        url: 'https://en.wikipedia.org/wiki/Main_Page'
     }];
     updateContent(testJson);
 
@@ -258,7 +263,12 @@ function updateContent(json) {
         var tr = document.createElement("tr");
         var td = document.createElement("td");
         td.setAttribute("class", "mdl-data-table__cell--non-numeric");
-        td.innerHTML = json[i]['entity'];
+        var a = document.createElement("a");
+        a.innerHTML = json[i]['entity'];
+        a.href = json[i]['url'];
+        a.target = '_blank';
+        td.appendChild(a);
+        // td.innerHTML = json[i]['entity'];
         tr.appendChild(td);
 
         var td2 = document.createElement("td");
@@ -302,41 +312,7 @@ function main() {
                 return true;
             }
         );
-
         send_data(query, links);
-        
-        let testJson = [{
-            entity: 'neural network',
-            frequency: 445,
-            rel_score: 0.9,
-            confi_score: 0.8,
-            overall_score: 0.9
-        }, {
-            entity: 'what network',
-            frequency: 223,
-            rel_score: 0.2,
-            confi_score: 0.8,
-            overall_score: 0.7
-        }, {
-            entity: 'ever network',
-            frequency: 112,
-            rel_score: 0.9,
-            confi_score: 0.8,
-            overall_score: 0.6
-        }, {
-            entity: 'ne network',
-            frequency: 45,
-            rel_score: 0.9,
-            confi_score: 0.8,
-            overall_score: 0.4
-        }, {
-            entity: 'w network',
-            frequency: 12,
-            rel_score: 0.9,
-            confi_score: 0.8,
-            overall_score: 0.2
-        }];
-
     }
 
 }
