@@ -48,59 +48,6 @@ function get_search_query() {
     return document.getElementById('lst-ib').value
 }
 
-
-function insert_analysis_chart(query) {
-    // // TODO This function will wait for data response from api script 
-    // console.log('inserting bar charts');
-    // var top_result_bar = document.getElementById("appbar");
-
-    // var container_div = document.createElement("div");
-    // container_div.setAttribute("class", "container");
-    // container_div.setAttribute("style", "padding-left:150px; display:flex;");
-    // var top_keywords_div = document.createElement("div");
-    // top_keywords_div.setAttribute("class", "keywords-container");
-    // top_keywords_div.setAttribute("style", "max-width:20%; margin-right:2rem;");
-    // var header_h4 = document.createElement("h6");
-    // header_h4.innerHTML = "Top 5 Most Relevant Keywords";
-    // var each_keywords = document.createElement("a");
-    // each_keywords.innerHTML = "whatever";
-    // top_keywords_div.appendChild(header_h4);
-    // top_keywords_div.appendChild(each_keywords);
-    // container_div.appendChild(top_keywords_div);
-
-    // var bar_chart_canvas = document.createElement("canvas");
-    // bar_chart_canvas.setAttribute("id", "barChart");
-    // bar_chart_canvas.setAttribute("style", "max-width:40%; max-height:20%")
-    // container_div.appendChild(bar_chart_canvas);
-
-    // top_result_bar.insertAdjacentElement("afterend", container_div);
-
-    // var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
-    // if (!location.ancestorOrigins.contains(extensionOrigin)) {
-    //     var script3 = document.createElement("script");
-    //     script3.src = chrome.runtime.getURL("/components/iframe-graph/bar-chart.js");
-    //     container_div.insertAdjacentElement("afterend", script3);
-    // }
-    // console.log('done inserting bar charts');
-
-    // // // console.log('inserting graph button');
-    // var result_stats_bar = document.getElementById("resultStats");
-    // var relation_entity_button = document.createElement("button");
-
-
-    // relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
-    // relation_entity_button.innerHTML = "Relationship Graph";
-    // relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
-    // // var versions_icon = document.createElement("i");
-    // // versions_icon.setAttribute("class", "material-icons")
-    // // versions_icon.innerHTML = "mood";
-    // // relation_entity_button.appendChild(versions_icon);
-    // result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
-
-    // relation_entity_button.onclick = function(){open_network_graph(query);};
-}
-
-
 function open_network_graph(query) {
     console.log("sent open network graph");
     var message = {
@@ -127,7 +74,7 @@ function recieve_data_callback(data) {
     return
 }
 
-function initialiseGraphs() {
+function initialiseGraphs(query) {
     var top_result_bar = document.getElementById("appbar");
 
     var container_div = document.createElement("div");
@@ -159,7 +106,16 @@ function initialiseGraphs() {
     bar_chart_canvas.setAttribute("style", "max-width:40%; max-height:20%");
     container_div.appendChild(bar_chart_canvas);
     top_result_bar.insertAdjacentElement("afterend", container_div);
+    var result_stats_bar = document.getElementById("resultStats");
+    var relation_entity_button = document.createElement("button");
 
+
+    relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
+    relation_entity_button.innerHTML = "Relationship Graph";
+    relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
+    result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
+
+    relation_entity_button.onclick = function(){open_network_graph(query);};
 }
 
 function formatJson(json) {
@@ -280,8 +236,7 @@ function main() {
         );
 
         send_data(query, links);
-        insert_analysis_chart(query);
-        initialiseGraphs();
+        initialiseGraphs(query);
         let testJson = [{
             entity: 'neural network',
             frequency: 123,
