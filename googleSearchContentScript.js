@@ -129,7 +129,9 @@ function initialiseGraphs(query) {
 
     var top_keywords_title = document.createElement("h3");
     top_keywords_title.innerHTML = "Top 5 Relevant Keywords";
-    top_keywords_title.setAttribute("style", "font-size:18px;margin-bottom:0;");
+    top_keywords_title.setAttribute("style", "font-size:18px;margin-bottom:0;width:fit-content;");
+    top_keywords_title.setAttribute("class", "mdl-badge");
+    top_keywords_title.setAttribute("data-badge", "i");
     top_keywords_div.appendChild(top_keywords_title);
 
     var keywords_table = document.createElement("table");
@@ -157,7 +159,9 @@ function initialiseGraphs(query) {
 
     var barchart_title = document.createElement("h3");
     barchart_title.innerHTML = "Frequency of Top Keywords";
-    barchart_title.setAttribute("style", "font-size:18px;margin-bottom:1rem;");
+    barchart_title.setAttribute("style", "font-size:18px;margin-bottom:1rem; width:fit-content;");
+    barchart_title.setAttribute("class", "mdl-badge");
+    barchart_title.setAttribute("data-badge", "i");
     barchart_div.appendChild(barchart_title);
 
     var bar_chart_canvas = document.createElement("canvas");
@@ -166,14 +170,29 @@ function initialiseGraphs(query) {
     barchart_div.appendChild(bar_chart_canvas);
     container_div.appendChild(barchart_div);
 
-        
+    // POPUP BUTTON
+    var result_stats_bar = document.getElementById("resultStats");
+    var relation_entity_button = document.createElement("button");
+    relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
+    relation_entity_button.innerHTML = "Relationship Graph";
+    relation_entity_button.setAttribute("style", "left:45%;");
+
+    result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
+    relation_entity_button.onclick = function () {
+        open_network_graph(query, data);
+    };
+    top_result_bar.insertAdjacentElement("afterend", relation_entity_button);
+
+
     // GOOGLE TRENDS STUFF
     var trends_div = document.createElement("div");
     trends_div.setAttribute("id", "trends");
     trends_div.setAttribute("style", "width:25%; margin-right:4rem;");
     var trends_title = document.createElement("h3");
     trends_title.innerHTML = "Interest over Time";
-    trends_title.setAttribute("style", "font-size:18px;margin-bottom:0rem;");
+    trends_title.setAttribute("style", "font-size:18px;margin-bottom:0rem;width:fit-content;");
+    trends_title.setAttribute("class", "mdl-badge");
+    trends_title.setAttribute("data-badge", "i");
     trends_div.appendChild(trends_title);
     container_div.appendChild(trends_div);
     top_result_bar.insertAdjacentElement("afterend", container_div);
@@ -196,7 +215,7 @@ function initialiseGraphs(query) {
         var divElem = document.getElementById('trends');
         trends.embed.renderExploreWidgetTo(divElem, "TIMESERIES", {
             "comparisonItem": [{
-                "keyword": " `+ query + `",
+                "keyword": " ` + query + `",
                 "geo": "",
                 "time": "today 12-m"
             }],
@@ -206,51 +225,12 @@ function initialiseGraphs(query) {
             "exploreQuery": "q=neural%20network&geo=US&date=today 12-m",
             "guestPath": "https://trends.google.com:443/trends/embed/"
         });
-        var header = document.getElementsByClassName("embed-header");
-        console.log(header[0]);
-        header[0].setAttribute("style", "display:none !important;");
         `;
         container_div.appendChild(trendScript);
 
     });
-    // var sslScript = document.createElement("script");
-    // sslScript.type = "text/javascript";
-    // sslScript.src = "https://ssl.gstatic.com/trends_nrtr/1480_RC02/embed_loader.js";
-    // container_div.appendChild(sslScript);
-
-    // var realScript = document.createElement("script");
-    // realScript.type = "text/javascript";
-    // realScript.innerHTML = `
-    // trends.embed.renderExploreWidget("TIMESERIES", {
-    //     "comparisonItem": [{
-    //         "keyword": "neural network",
-    //         "geo": "US",
-    //         "time": "today 12-m"
-    //     }],
-    //     "category": 0,
-    //     "property": ""
-    // }, {
-    //     "exploreQuery": "q=neural%20network&geo=US&date=today 12-m",
-    //     "guestPath": "https://trends.google.com:443/trends/embed/"
-    // });
-    // `;
-    // container_div.appendChild(realScript);
 
 
-
-    // bar_chart_canvas.insertAdjacentElement("beforeBegin", barchart_title);
-
-    // POPUP BUTTON
-    // var result_stats_bar = document.getElementById("resultStats");
-    // var relation_entity_button = document.createElement("button");
-    // relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
-    // relation_entity_button.innerHTML = "Relationship Graph";
-    // relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
-    // result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
-
-    // relation_entity_button.onclick = function () {
-    //     open_network_graph(query, data);
-    // };
 
 
 }
@@ -290,10 +270,10 @@ function displayBarChart(json) {
                     data: [` + value + `],
                     backgroundColor: [
                         'rgba(28, 115, 231, 1)',
-                        'rgba(28, 115, 231, 0.8)',
-                        'rgba(28, 115, 231, 0.6)',
-                        'rgba(28, 115, 231, 0.4)',
-                        'rgba(28, 115, 231, 0.2)',
+                        'rgba(28, 115, 231, 1)',
+                        'rgba(28, 115, 231, 1)',
+                        'rgba(28, 115, 231, 1)',
+                        'rgba(28, 115, 231, 1)',
                     ],
                     borderWidth: 1
                 }]
