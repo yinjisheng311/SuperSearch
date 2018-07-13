@@ -58,8 +58,9 @@ function insert_analysis_iframe() {
     if (!location.ancestorOrigins.contains(extensionOrigin)) {
         var iframe = document.createElement("iframe");
         iframe.src = chrome.runtime.getURL("/components/iframe-graph/iframe-graph.html");
+        iframe.setAttribute('style', 'border:none; margin:0; padding:0;')
         iframe.width = '1000';
-        iframe.height = '200';
+        iframe.height = '400';
         iframe.className = '.super_iframe';
         top_result_bar.insertAdjacentElement("afterend", iframe);
     }
