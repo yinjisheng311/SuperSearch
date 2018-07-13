@@ -138,13 +138,8 @@ function initialiseGraphs(query) {
     relation_entity_button.setAttribute("style", "float:right; margin-right:1rem; margin-top:1rem;");
     result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);
 
-<<<<<<< HEAD
-    relation_entity_button.onclick = function () {
-        open_network_graph(query);
-=======
     relation_entity_button.onclick = function() {
         open_network_graph(query, data);
->>>>>>> b9658712eace63768bb418c69a24353b7dd26faa
     };
 }
 
