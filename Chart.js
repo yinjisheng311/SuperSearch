@@ -14382,3 +14382,4 @@ module.exports = function(Chart) {
 
 },{"1":1,"25":25,"45":45}]},{},[7])(7)
 });
+console.log('ran chart.js');
