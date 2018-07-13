@@ -29,7 +29,8 @@
     "*/bar-chart.js",
     "Chart.js",
     "require.js",
-	"network_graph.js"
+	"network_graph.js",
+	"components/*"
 
   ]
 

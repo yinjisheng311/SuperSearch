@@ -97,7 +97,9 @@ function insert_analysis_chart(query) {
     download_button.appendChild(versions_icon);
     result_stats_bar.insertAdjacentElement("afterend", download_button);
 
-    download_button.onclick = function(){open_network_graph(query);};
+    download_button.onclick = function() {
+        open_network_graph(query);
+    };
 }
 
 
@@ -121,8 +123,9 @@ function send_data(query, links) {
     chrome.runtime.sendMessage(message);
 }
 
-
-function recieve_data_callback() {
+var data = null
+function recieve_data_callback(data) {
+	//render G graphs
     return
 }
 
@@ -135,10 +138,21 @@ function main() {
         //
         console.log("List of links ====");
         console.log(links);
-        console.log("Query:" + query)
+        console.log("Query:" + query);
 
         // listener to render graphs
-        chrome.runtime.onMessage.addListener(recieve_data_callback);
+        chrome.runtime.onMessage.addListener(
+            function(request, sender, sendResponse) {
+				if (request.type == 'return_data' && request.query == query){
+					data = request.data;	
+					recieve_data_callback(data);
+					sendResponse({
+						status:true
+					});
+				}
+                return true;
+            }
+        );
 
         send_data(query, links);
         insert_analysis_chart(query);

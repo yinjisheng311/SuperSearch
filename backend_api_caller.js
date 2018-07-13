@@ -6,11 +6,10 @@ chrome.runtime.onMessage.addListener(
             var query = request.query;
             console.log(request);
             console.log(sender);
-			fetch_data(query,links);			
-            //scrape_url(links[0])
+            fetch_data(query, links);
         }
         if (request.type == 'open_network_graph') {
-            open_network_graph_popup(request.query);
+            open_network_graph_popup(request.query, request.data);
         }
     });
 
@@ -28,7 +27,7 @@ function scrape_url(url) {
     xhttp.send();
 }
 
-function open_network_graph_popup(query) {
+function open_network_graph_popup(query, data) {
     graph_url = chrome.runtime.getURL('network_graph.html')
     console.log("recieve open network graph command");
     console.log(graph_url);
@@ -38,43 +37,32 @@ function open_network_graph_popup(query) {
             state: 'normal'
         },
         function(windows) {
-            var message = {
-                type: 'network_graph_data',
-                query: query,
-                data: '555'
-            };
-            chrome.runtime.sendMessage(message);
-            //execute_script_in_popup(windows, query);
+            send_init_data(windows, query, data);
         }
-    ); //callback needed?
+    );
 }
 
-function execute_script_in_popup(windows, query) {
-    //tab = windows.tab[0];
-    console.log(windows);
-    tab_id = windows.tabs[0].id;
-    chrome.tabs.executeScript(
-        tab_id, {
-            // add listener
-            file: 'network_graph.js'
-        },
-        function() {
-            // send message 
-            var message = {
-                type: 'network_graph_data',
-                query: query,
-                data: '555'
-            };
-            chrome.runtime.sendMessage(message);
-        });
+function send_init_data(windows, query, data) {
+    tab = windows.tabs[0];
+    var message = {
+        type: 'network_graph_data',
+        query: query,
+        data: '555'      //replace with data: data
+    };
 
+
+    chrome.tabs.sendMessage(tab.id, message, function(response) {
+        if (response && response.status) {} else {
+            setTimeout(function() {
+                console.log(tab.id)
+                console.log(chrome.runtime.lastError);
+                console.log(response);
+                send_init_data(windows, query);
+            }, 500);
+        }
+    });
 }
 
-function get_data(query, links) {
-    //TODO check if query is cached
-    //TODO api calls here
-}
-
-function fetch_data(query, links){
-// NIC INSERT UR CODE HERE
+function fetch_data(query, links) {
+    // NIC INSERT UR CODE HERE
 }
