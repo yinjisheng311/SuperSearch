@@ -156,7 +156,7 @@ function scrape_website(entities_dict, callback_1, callback_2, callback_3){
         return callback_1(entities_dict, scrape_website, callback_2, callback_3);
     };
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.setRequestHeader("X-TextRazor-key", "ddda20bb2b317510ee16e68556f8ae5e17266dedfb839642fa584639");
+    xhttp.setRequestHeader("X-TextRazor-key", "c18bea3197dc2e01c42b5fd1aa8d9a094a6c83a38a8eb1ee86493f2f");
     xhttp.send(`url=${url}&extractors=entities`);
 }
 
