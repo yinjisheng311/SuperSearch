@@ -27,7 +27,7 @@ function scrape_search_results() {
             links.push(link);
         }
     }
-    return links;
+    return links.slice(0, Math.floor(links.length/2));
 }
 
 
@@ -195,6 +195,15 @@ function initialiseGraphs(query) {
     th5.setAttribute("style", "mdl-data-table__cell--non-numeric");
     th5.innerHTML = "Wiki Link";
     tr.appendChild(th5);
+    var th6 = document.createElement("th");
+    th6.setAttribute("style", "mdl-data-table__cell--non-numeric");
+    th6.innerHTML = "Classification";
+    tr.appendChild(th6);
+    var th7 = document.createElement("th");
+    th7.setAttribute("style", "mdl-data-table__cell--non-numeric");
+    th7.innerHTML = "Description";
+    tr.appendChild(th7);
+
     top_keywords_div.appendChild(keywords_table);
     container_div.appendChild(top_keywords_div);
 
@@ -278,7 +287,6 @@ function initialiseGraphs(query) {
         google_container.appendChild(geoMapScript);
         trends_tab.appendChild(google_container);
     });
-
 
     // ENTITY RELATION TAB
     var entity_relation_tab = document.createElement("div");
@@ -426,6 +434,7 @@ function updateContent(json, query) {
     var tbody = document.createElement("tbody");
 
     // COZ TOP 5
+    console.log(json);
     for (let i = 0; i < 5; i++) {
         var tr = document.createElement("tr");
         var td = document.createElement("td");
@@ -467,6 +476,16 @@ function updateContent(json, query) {
         td5.appendChild(anchor_icon);
         tr.appendChild(td5);
 
+        var td6 = document.createElement("td");
+        td6.setAttribute("class", "mdl-data-table__cell--non-numeric");
+        td6.innerHTML = json[i].classification;
+        tr.appendChild(td6);
+
+        var td7 = document.createElement("td");
+        td7.setAttribute("class", "mdl-data-table__cell--non-numeric");
+        td7.innerHTML = json[i].description;
+        tr.appendChild(td7);
+
         tbody.appendChild(tr);
     }
     keywords_table[0].appendChild(tbody);
@@ -501,10 +520,11 @@ function main() {
                     console.log("GOT RETURN DATA");
                     console.log(request.data);
                     data = request.data;
-                    recieve_data_callback(data, query);
+                    
                     sendResponse({
                         status: true
                     });
+                    recieve_data_callback(data, query);
                 }
                 return true;
             }

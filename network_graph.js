@@ -54,7 +54,7 @@ chrome.runtime.onMessage.addListener(
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#2c98f0',
+                            'background-color': '#77B3E4',
                             'label': 'data(id)'
                         }
                     },
@@ -70,7 +70,7 @@ chrome.runtime.onMessage.addListener(
                     {
                         selector: 'node[weight>50]',
                         style: {
-                            'background-color': '#4055b2',
+                            'background-color': '#2376E5',
                             'label': 'data(id)',
                             'width': 50,
                             'height': 50
