@@ -179,7 +179,7 @@ function collation(entities_dict, callback_3){
 
     sortable.sort(function(a,b){
         // Sort by overall score, then frequency
-        return b[1]["overall"] - a[1]["overall"] || b[1]["count"] - a[1]["count"];;
+        return b[1]["overall"] - a[1]["overall"] && b[1]["count"] - a[1]["count"];;
     });
 
     var final_k_entities = [];
