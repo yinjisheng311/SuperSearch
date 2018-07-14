@@ -95,6 +95,7 @@ function send_init_data(windows, query, data) {
 
 // var entities_dict = {};
 var global_links = []
+var it = null;
 
 
 // function fetch_data(query, links){}
@@ -221,7 +222,7 @@ function collation(entities_dict, callback_3){
     }
 
     // Use histogram equalization to spread out the scores of the entities
-    console.log(hist);
+    // console.log(hist);
     var counter = 0;
     for(var idx = 0; idx<num_bins;idx++){
         counter += hist[idx];
@@ -229,18 +230,83 @@ function collation(entities_dict, callback_3){
     }
     var acc_min = hist[0];
     var acc_max = hist[hist.length-1];
-    console.log(hist);
+    // console.log(hist);
 
     for(var idx=0;idx<num_bins;idx++){
         hist[idx] = Math.floor((hist[idx]-acc_min)/(acc_max-acc_min)*(num_bins-1));
     }
 
-    console.log(hist);
+    // console.log(hist);
     for(var i in final_k_entities){
         final_k_entities[i]["hist_score"] = hist[Math.floor(final_k_entities[i]["overall_score"]*100)-1]
+        // // Add the classification types, if available to the json files
+        // id = final_k_entities[i]["entity_name"];
+        // var clusters = [];
+        // if (entities_dict[id]["type"] != undefined){
+        //     for(var type in entities_dict[id]["type"]){
+        //         clusters.push(entities_dict[id]["type"][type]);
+        //     }
+        // }
+        // if (entities_dict[id]["freebase_type"] != undefined){
+        //     for(var fb_type in entities_dict[id]["freebase_type"]){
+        //         clusters.push(entities_dict[id]["freebase_type"][fb_type]);
+        //     }
+        // }
+        // final_k_entities[i]["clusters"] = clusters;
     }
 
     console.log(final_k_entities);
-    callback_3(final_k_entities);
+    // callback_3(final_k_entities);
+
+    // Use google API for extra info
+    it = makeIterator(final_k_entities);
+    for(var i in final_k_entities){
+        make_google_api_call(i, final_k_entities[i]["entity_name"], function(){
+            // console.log("Returned from callback!");
+            if (!(it.next().done)){
+                it.next();
+                // console.log("iterating...");
+            }else{
+                // console.log(final_k_entities);
+                callback_3(final_k_entities);
+            }
+        });
+    }
 }
 
+function makeIterator(array) {
+    var nextIndex = 0;
+    
+    return {
+       next: function() {
+           return nextIndex < array.length ?
+               {value: array[nextIndex++], done: false} :
+               {done: true};
+       }
+    };
+}
+
+function make_google_api_call(idx, entity_id, _callback){
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", `https://kgsearch.googleapis.com/v1/entities:search?query=${entity_id}&key=AIzaSyAuNDK9oAnnO7GPr47K2MzyxTM0BJ8NsVU&limit=1&indent=True`);
+    xhttp.onload = function(){
+        if(this.readyState != 4 && this.status != 200){
+            console.log("ERROR: readyState is ", this.readyState, " status is ", this.status, " . They should be 4 and 200");
+            return _callback();
+        }
+        var resp = JSON.parse(xhttp.responseText)["itemListElement"];
+        var result = resp[0]["result"];
+        // console.log(resp, result);
+        var classification = result["@type"][0];
+        var description = result["description"];
+        var result_score = resp[0]["resultScore"];
+        // console.log(entity_id, classification, description, result_score);
+        if (result_score>50){
+            final_k_entities[idx]["classification"] = classification;
+            final_k_entities[idx]["description"] = description;
+        }
+        _callback();
+    }
+    xhttp.send();
+
+}
