@@ -118,14 +118,20 @@ function scrape_website(entities_dict, callback_1, callback_2, callback_3){
     xhttp.onload = function(){
         if(this.readyState != 4 && this.status != 200){
             console.log("ERROR: readyState is ", this.readyState, " status is ", this.status, " . They should be 4 and 200");
-            return;
+            return callback_1(entities_dict, scrape_website, callback_2, callback_3);
         }
     
         var resp = JSON.parse(xhttp.responseText)["response"];
+
+        if (typeof resp === "undefined") {
+            console.log("ERROR: response is undefined! skipping it...", resp);
+            return callback_1(entities_dict, scrape_website, callback_2, callback_3);
+        }
+
         
         if(!(resp.hasOwnProperty("entities"))){
             console.log("ERROR with reading response, skipping it...", resp);
-            return;
+            return callback_1(entities_dict, scrape_website, callback_2, callback_3);
         }
         var entities = resp["entities"];
         // var categories = resp["categories"];
