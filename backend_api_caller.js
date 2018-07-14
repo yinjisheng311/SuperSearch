@@ -16,6 +16,8 @@ chrome.runtime.onMessage.addListener(
                 console.log(message);
                 send_return_data(message, tab_id);
             });
+            // var message = {};
+            // send_return_data(message, tab_id);
         }
         if (request.type == 'open_network_graph') {
             console.log("sending data to network graph 1");
