@@ -182,12 +182,51 @@ function collation(entities_dict, callback_3){
         return b[1]["overall"] - a[1]["overall"] || b[1]["count"] - a[1]["count"];;
     });
 
-    var final_k_entities = [];
-    console.log(sortable);
-    for (var idx=0; idx<20 || idx<sortable.length ;idx++){
+    // var final_k_entities = [];
+    // console.log(sortable);
+    // for (var idx=0; idx<20 || idx<sortable.length ;idx++){
+    //     id = sortable[idx][0];
+    //     arr = sortable[idx][1];
+    //     final_k_entities.push({"entity_name":id, "relevance_score":arr["rel_score"], "confidence_score":arr["con_score"], "overall_score":arr["overall"], "frequency":arr["count"], "url":arr["url"]});
+    // }
+
+    final_k_entities = [];
+    var num_bins = 100;
+    var hist = [];
+    // Initialise histogram
+    for(var i=0;i<num_bins;i++){
+        hist[i] = 0;
+    }
+    for (var idx = 0; idx<20 && idx < sortable.length;idx++){
         id = sortable[idx][0];
         arr = sortable[idx][1];
         final_k_entities.push({"entity_name":id, "relevance_score":arr["rel_score"], "confidence_score":arr["con_score"], "overall_score":arr["overall"], "frequency":arr["count"], "url":arr["url"]});
+        floor_overall = Math.floor(arr["overall"]*100);
+        // Deal with fringe case
+        if (floor_overall == 0){
+            floor_overall ++;
+        }
+        hist[floor_overall-1] += 1;
+    }
+
+    // Use histogram equalization to spread out the scores of the entities
+    console.log(hist);
+    var counter = 0;
+    for(var idx = 0; idx<num_bins;idx++){
+        counter += hist[idx];
+        hist[idx] = counter;
+    }
+    var acc_min = hist[0];
+    var acc_max = hist[hist.length-1];
+    console.log(hist);
+
+    for(var idx=0;idx<num_bins;idx++){
+        hist[idx] = Math.floor((hist[idx]-acc_min)/(acc_max-acc_min)*(num_bins-1));
+    }
+
+    console.log(hist);
+    for(var i in final_k_entities){
+        final_k_entities[i]["hist_score"] = hist[Math.floor(final_k_entities[i]["overall_score"]*100)-1]
     }
 
     console.log(final_k_entities);
