@@ -161,7 +161,7 @@ function collation(entities_dict, callback_3){
         con_penalty = 15;
         score =  weighted_rel * entities_dict[id]["con_score"]/freq/con_penalty;
         // Rescale the score to be between 0-1
-        score = score*con_penalty;
+        score = score*con_penalty/10;
         if (score < 0.5){
             delete entities_dict[id];
             continue;
