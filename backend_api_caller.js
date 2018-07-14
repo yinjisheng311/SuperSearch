@@ -260,13 +260,12 @@ function collation(entities_dict, callback_3){
 
     // Use google API for extra info
     it = makeIterator(final_k_entities);
+    it.next();
     for(var i in final_k_entities){
         make_google_api_call(i, final_k_entities[i]["entity_name"], function(){
             // console.log("Returned from callback!");
-            if (!(it.next().done)){
-                it.next();
-                // console.log("iterating...");
-            }else{
+            var move = it.next()
+            if (move.done){
                 console.log(final_k_entities);
                 callback_3(final_k_entities);
             }
