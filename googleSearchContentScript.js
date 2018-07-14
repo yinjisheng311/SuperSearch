@@ -73,7 +73,7 @@ function send_data(query, links) {
 
 var data = null
 
-function recieve_data_callback(data) {
+function recieve_data_callback(data, query) {
     // //render G graphs
     // let testJson = [{
     //     entity_name: 'neural network',
@@ -111,7 +111,7 @@ function recieve_data_callback(data) {
     //     overall_score: 0.2,
     //     url: 'https://en.wikipedia.org/wiki/Main_Page'
     // }];
-    updateContent(data);
+    updateContent(data, query);
 
     // return
 }
@@ -274,7 +274,8 @@ function showMaterialDialog() {
 function formatJson(json) {
     let labels = [];
     let value = [];
-    for (let i = 0; i < json.length; i++) {
+    // COZ TOP 5
+    for (let i = 0; i < 5; i++) {
         labels.push(json[i].entity_name);
         value.push(json[i].frequency);
     }
@@ -356,7 +357,7 @@ function displayBarChart(json) {
     }
 }
 
-function updateContent(json) {
+function updateContent(json, query) {
     // HIDE LOADING
     var loading_div = document.getElementsByClassName("loading");
     loading_div[0].setAttribute("style", "display:none;");
@@ -387,7 +388,9 @@ function updateContent(json) {
     console.log(keywords_table[0]);
 
     var tbody = document.createElement("tbody");
-    for (let i = 0; i < json.length; i++) {
+
+    // COZ TOP 5
+    for (let i = 0; i < 5; i++) {
         var tr = document.createElement("tr");
         var td = document.createElement("td");
         td.setAttribute("class", "mdl-data-table__cell--non-numeric");
@@ -432,7 +435,7 @@ function main() {
                     console.log("GOT RETURN DATA");
                     console.log(request.data);
                     data = request.data;
-                    recieve_data_callback(data);
+                    recieve_data_callback(data, query);
                     sendResponse({
                         status: true
                     });
