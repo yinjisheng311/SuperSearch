@@ -10,7 +10,7 @@
     ]
   },
   "permissions": [
-	"storage",
+    "storage",
     "webNavigation",
     "activeTab",
     "tabs",
@@ -29,8 +29,8 @@
     "*/bar-chart.js",
     "Chart.js",
     "require.js",
-	"network_graph.js",
-	"components/*"
+    "network_graph.js",
+    "components/*"
 
   ]
 
