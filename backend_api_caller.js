@@ -43,7 +43,7 @@ function send_return_data(message, tab_id) {
 
 function scrape_url(url) {
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+    xhttp.onload = function() {
         console.log(this.status);
         if (this.readyState == 4 && this.status == 200) {
             console.log(xhttp.responseText);
@@ -122,8 +122,13 @@ function scrape_website(entities_dict, callback_1, callback_2, callback_3){
         }
     
         var resp = JSON.parse(xhttp.responseText)["response"];
+        
+        if(!(resp.hasOwnProperty("entities"))){
+            console.log("ERROR with reading response, skipping it...", resp);
+            return;
+        }
         var entities = resp["entities"];
-        var categories = resp["categories"];
+        // var categories = resp["categories"];
     
         for(idx in entities){
             // keys = {"confidenceScore", "endingPos", "entityEnglishId", "entityId", "id", "matchedText", "matchingTokens":Array, "relevanceScore", "startingPos", "type":Array, "unit", "wikiLink"}
