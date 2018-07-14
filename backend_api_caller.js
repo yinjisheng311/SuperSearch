@@ -140,24 +140,6 @@ function scrape_website(entities_dict, callback_1, callback_2, callback_3){
                 entities_dict[id]["count"] += 1;
             }
         }
-    
-        for (id in entities_dict){
-            freq = entities_dict[id]["count"]
-            weighted_rel = entities_dict[id]["rel_score"]/freq
-            if(weighted_rel < 0.5){
-                delete entities_dict[id];
-                continue;
-            }
-            con_penalty = 15;
-            score =  weighted_rel * entities_dict[id]["con_score"]/freq/con_penalty;
-            if (score < 0.5){
-                delete entities_dict[id];
-                continue;
-            }
-            entities_dict[id]["overall"] = score;
-            entities_dict[id]["rel_score"] = weighted_rel;
-            entities_dict[id]["con_score"] = entities_dict[id]["con_score"]/freq;
-        }
         return callback_1(entities_dict, scrape_website, callback_2, callback_3);
     };
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -166,6 +148,28 @@ function scrape_website(entities_dict, callback_1, callback_2, callback_3){
 }
 
 function collation(entities_dict, callback_3){
+    console.log(entities_dict);
+    for (id in entities_dict){
+        freq = entities_dict[id]["count"]
+        weighted_rel = entities_dict[id]["rel_score"]/freq
+        if(weighted_rel < 0.5){
+            delete entities_dict[id];
+            continue;
+        }
+        con_penalty = 15;
+        score =  weighted_rel * entities_dict[id]["con_score"]/freq/con_penalty;
+        // Rescale the score to be between 0-1
+        score = score*con_penalty;
+        if (score < 0.5){
+            delete entities_dict[id];
+            continue;
+        }
+        entities_dict[id]["overall"] = score;
+        entities_dict[id]["rel_score"] = weighted_rel;
+        entities_dict[id]["con_score"] = entities_dict[id]["con_score"]/freq;
+    }
+    // console.log(entities_dict);
+
     var sortable = [];
     for (id in entities_dict){
         sortable.push([id, entities_dict[id]]);
@@ -176,15 +180,15 @@ function collation(entities_dict, callback_3){
         return b[1]["overall"] - a[1]["overall"] || b[1]["count"] - a[1]["count"];;
     });
 
-    var final_5_entities = [];
-
-    for (var idx=0; idx<5;idx++){
+    var final_k_entities = [];
+    console.log(sortable);
+    for (var idx=0; idx<20;idx++){
         id = sortable[idx][0];
         arr = sortable[idx][1];
-        final_5_entities.push({"entity_name":id, "relevance_score":arr["rel_score"], "confidence_score":arr["con_score"], "overall_score":arr["overall"], "frequency":arr["count"], "url":arr["url"]});
+        final_k_entities.push({"entity_name":id, "relevance_score":arr["rel_score"], "confidence_score":arr["con_score"], "overall_score":arr["overall"], "frequency":arr["count"], "url":arr["url"]});
     }
 
-    console.log(final_5_entities);
-    callback_3(final_5_entities);
+    console.log(final_k_entities);
+    callback_3(final_k_entities);
 }
 
