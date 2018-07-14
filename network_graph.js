@@ -22,8 +22,7 @@ chrome.runtime.onMessage.addListener(
                 let eachNode = {
                     data: {
                         id: data[i].entity_name,
-                        weight: data[i].overall_score,
-                        url: data[i].url
+                        weight: data[i].hist_score,
                     }
                 };
                 nodes.push(eachNode);
@@ -69,7 +68,7 @@ chrome.runtime.onMessage.addListener(
                         }
                     },
                     {
-                        selector: 'node[weight>0.5]',
+                        selector: 'node[weight>50]',
                         style: {
                             'background-color': '#4055b2',
                             'label': 'data(id)',
@@ -114,7 +113,10 @@ chrome.runtime.onMessage.addListener(
                 console.log('clicked ' + this.id());
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].entity_name == this.id()) {
-                        window.open(data[i].url);
+                        let newGoogleSearchUrl = 'https://www.google.com/search?q=' + this.id();
+                        // window.open(data[i].url);
+                        window.open(newGoogleSearchUrl);
+
                         break;
                     }
                 }
