@@ -304,6 +304,9 @@ function make_google_api_call(idx, entity_id, _callback){
         if (result_score>50){
             final_k_entities[idx]["classification"] = classification;
             final_k_entities[idx]["description"] = description;
+        }else{
+            final_k_entities[idx]["classification"] = "";
+            final_k_entities[idx]["description"] = "";
         }
         _callback();
     }
