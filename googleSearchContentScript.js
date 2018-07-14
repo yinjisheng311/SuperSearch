@@ -156,21 +156,21 @@ function initialiseGraphs(query) {
 
     var container_div = document.createElement("div");
     container_div.setAttribute("class", "container");
-    container_div.setAttribute("style", "padding-left:150px; display:flex;margin-bottom:1rem;");
+    container_div.setAttribute("style", "display:flex;margin-bottom:1rem;flex-direction:column; align-items:center;");
 
     // KEYWORDS DIV HERE
     var top_keywords_div = document.createElement("div");
     top_keywords_div.setAttribute("class", "keywords-container");
 
     var top_keywords_title = document.createElement("h3");
-    top_keywords_title.innerHTML = "Top 5 Relevant Keywords";
-    top_keywords_title.setAttribute("style", "font-size:16px;margin:0;width:fit-content;");
+    top_keywords_title.innerHTML = "Top 5 Keywords";
+    top_keywords_title.setAttribute("style", "font-size:16px;margin:0;text-align:center;");
 
     top_keywords_div.appendChild(top_keywords_title);
 
     var keywords_table = document.createElement("table");
     keywords_table.setAttribute("class", "mdl-data-table mdl-js-data-table mdl-shadow--2dp");
-    keywords_table.setAttribute("style", "margin-right:5rem;")
+    // keywords_table.setAttribute("style", "margin-right:5rem;")
     var thead = document.createElement("thead");
     keywords_table.appendChild(thead);
     var tr = document.createElement("tr");
@@ -181,18 +181,30 @@ function initialiseGraphs(query) {
     tr.appendChild(th1);
     var th2 = document.createElement("th");
     th2.setAttribute("style", "mdl-data-table__cell--non-numeric");
-    th2.innerHTML = "Score";
+    th2.innerHTML = "Overall Score";
     tr.appendChild(th2);
+    var th3 = document.createElement("th");
+    th3.setAttribute("style", "mdl-data-table__cell--non-numeric");
+    th3.innerHTML = "Confidence Score";
+    tr.appendChild(th3);
+    var th4 = document.createElement("th");
+    th4.setAttribute("style", "mdl-data-table__cell--non-numeric");
+    th4.innerHTML = "Relevance Score";
+    tr.appendChild(th4);
+    var th5 = document.createElement("th");
+    th5.setAttribute("style", "mdl-data-table__cell--non-numeric");
+    th5.innerHTML = "Wiki Link";
+    tr.appendChild(th5);
     top_keywords_div.appendChild(keywords_table);
     container_div.appendChild(top_keywords_div);
 
     // BARCHART CANVAS HERE
     var barchart_div = document.createElement("div");
-    barchart_div.setAttribute("style", "width:45%; height:100%; margin-right:3rem;");
+    barchart_div.setAttribute("style", "width:45%; height:100%;");
 
     var barchart_title = document.createElement("h3");
     barchart_title.innerHTML = "Frequency of Top Keywords";
-    barchart_title.setAttribute("style", "font-size:16px;margin:0; width:fit-content;");
+    barchart_title.setAttribute("style", "font-size:16px;margin:0;text-align:center;");
     barchart_div.appendChild(barchart_title);
 
     var bar_chart_canvas = document.createElement("canvas");
@@ -420,16 +432,40 @@ function updateContent(json, query) {
         td.setAttribute("class", "mdl-data-table__cell--non-numeric");
         var a = document.createElement("a");
         a.innerHTML = json[i].entity_name;
-        a.href = json[i].url;
+        let newGoogleSearchUrl = 'https://www.google.com/search?q=' + json[i].entity_name;
+        a.href = newGoogleSearchUrl;
         a.target = '_blank';
         td.appendChild(a);
-        // td.innerHTML = json[i]['entity'];
         tr.appendChild(td);
 
         var td2 = document.createElement("td");
         td2.setAttribute("class", "mdl-data-table__cell--non-numeric");
         td2.innerHTML = json[i].overall_score.toFixed(2);
         tr.appendChild(td2);
+
+        var td3 = document.createElement("td");
+        td3.setAttribute("class", "mdl-data-table__cell--non-numeric");
+        td3.innerHTML = json[i].confidence_score.toFixed(2);
+        tr.appendChild(td3);
+
+        var td4 = document.createElement("td");
+        td4.setAttribute("class", "mdl-data-table__cell--non-numeric");
+        td4.innerHTML = json[i].relevance_score.toFixed(2);
+        tr.appendChild(td4);
+
+        var td5 = document.createElement("td");
+        td5.setAttribute("class", "mdl-data-table__cell--non-numeric");
+        var anchor_icon = document.createElement("a");
+        // icon_button.setAttribute("style", "mdl-button mdl-js-button mdl-button--icon");
+
+        var link_icon = document.createElement("i");
+        link_icon.setAttribute("class", "material-icons");
+        link_icon.innerHTML = "link";
+        anchor_icon.appendChild(link_icon);
+        anchor_icon.href = json[i].url;
+        anchor_icon.target = '_blank';
+        td5.appendChild(anchor_icon);
+        tr.appendChild(td5);
 
         tbody.appendChild(tr);
     }
