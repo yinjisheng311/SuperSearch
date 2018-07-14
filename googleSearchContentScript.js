@@ -222,25 +222,41 @@ function initialiseGraphs(query) {
     trends_div.appendChild(tooltip3);
 
     container_div.appendChild(trends_div);
+
+    // GOOGLE GEO MAP STUFF
+    var geo_map_trends_div = document.createElement("div");
+    geo_map_trends_div.setAttribute("id", "geo-map-trends");
+    geo_map_trends_div.setAttribute("style", "width:25%; margin-right:4rem;");
+    var trends_title = document.createElement("h3");
+    trends_title.innerHTML = "Interest over Time";
+    trends_title.setAttribute("style", "font-size:18px;margin-bottom:0rem;width:fit-content;");
+    trends_title.setAttribute("class", "mdl-badge");
+    trends_title.setAttribute("id", "tt3");
+    trends_title.setAttribute("data-badge", "i");
+
+    // TOOLTIP FOR BADGE
+    var tooltip3 = document.createElement("div");
+    tooltip3.setAttribute("class", "mdl-tooltip");
+    tooltip3.setAttribute("for", "tt3");
+    tooltip2.innerHTML = `
+    <strong>How did we calculate Interest?</strong><br>
+    This is an embedded Google Trends API that plots the interest of web search
+    of the particular topic against time.
+    `;
+    geo_map_trends_div.appendChild(trends_title);
+    geo_map_trends_div.appendChild(tooltip3);
+
+
     top_result_bar.insertAdjacentElement("afterend", container_div);
+    container_div.insertAdjacentElement("afterend", geo_map_trends_div);
 
     loadScript("https://ssl.gstatic.com/trends_nrtr/1480_RC02/embed_loader.js", function () {
         //initialization code
-        var trendStyle = document.createElement("style");
-        trendStyle.innerHTML = `
-            div.embed-footer {
-                display:none !important;
-            }
-            div.embed-header {
-                display:none !important;
-            }
-        `;
-        container_div.appendChild(trendStyle);
         var trendScript = document.createElement("script");
         trendScript.type = "text/javascript";
         trendScript.innerHTML = `
         var divElem = document.getElementById('trends');
-        trends.embed.renderExploreWidgetTo(divElem, "TIMESERIES", {
+        trends.embed.renderExploreWidgetTo(divElem, "RELATED_QUERIES", {
             "comparisonItem": [{
                 "keyword": " ` + query + `",
                 "geo": "",
@@ -254,6 +270,25 @@ function initialiseGraphs(query) {
         });
         `;
         container_div.appendChild(trendScript);
+
+        var geoMapScript = document.createElement("script");
+        geoMapScript.type = "text/javascript";
+        geoMapScript.innerHTML = `
+        var divElem = document.getElementById('geo-map-trends');
+        trends.embed.renderExploreWidgetTo(divElem, "GEO_MAP", {
+            "comparisonItem": [{
+                "keyword": " ` + query + `",
+                "geo": "",
+                "time": "today 12-m"
+            }],
+            "category": 0,
+            "property": ""
+        }, {
+            "exploreQuery": "q=neural%20network&geo=US&date=today 12-m",
+            "guestPath": "https://trends.google.com:443/trends/embed/"
+        });
+        `;
+        container_div.appendChild(geoMapScript);
 
     });
 
@@ -269,7 +304,7 @@ function initialiseGraphs(query) {
     loading.setAttribute("class", "mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active");
     loading_div.appendChild(loading);
     top_result_bar.insertAdjacentElement("afterend", loading_div);
-    
+
     // showMaterialDialog();
 }
 
@@ -405,7 +440,7 @@ function updateContent(json, query) {
     // UNHIDE CONTAINER
     var hideContainer_div = document.getElementsByClassName("container");
     hideContainer_div[0].setAttribute("style", "padding-left:150px; display:flex;margin-bottom:1rem;");
-    
+
     // POPUP BUTTON
     var top_result_bar = document.getElementById("appbar");
     var relation_entity_button = document.createElement("button");
@@ -464,26 +499,36 @@ function main() {
         console.log("List of links ====");
         console.log(links);
         console.log("Query:" + query);
-        // TODO: LOADING
-        initialiseGraphs(query);
 
-        // listener to render graphs
-        chrome.runtime.onMessage.addListener(
-            function (request, sender, sendResponse) {
-                console.log(request);
-                if (request.type == 'return_data' && request.query == query) {
-                    console.log("GOT RETURN DATA");
-                    console.log(request.data);
-                    data = request.data;
-                    recieve_data_callback(data, query);
-                    sendResponse({
-                        status: true
-                    });
+        var search_bar = document.getElementById("hdtb-msb");
+        var tell_me_more_button = document.createElement("button");
+        tell_me_more_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised mdl-button--colored");
+        tell_me_more_button.innerHTML = "Tell Me More";
+        tell_me_more_button.setAttribute("style", "float:right; margin-right:2rem;");
+
+        tell_me_more_button.onclick = function () {
+            initialiseGraphs(query);
+
+            // listener to render graphs
+            chrome.runtime.onMessage.addListener(
+                function (request, sender, sendResponse) {
+                    console.log(request);
+                    if (request.type == 'return_data' && request.query == query) {
+                        console.log("GOT RETURN DATA");
+                        console.log(request.data);
+                        data = request.data;
+                        recieve_data_callback(data, query);
+                        sendResponse({
+                            status: true
+                        });
+                    }
+                    return true;
                 }
-                return true;
-            }
-        );
-        send_data(query, links);
+            );
+            send_data(query, links);
+        };
+        search_bar.insertAdjacentElement("afterend", tell_me_more_button);
+
     }
 
 }
