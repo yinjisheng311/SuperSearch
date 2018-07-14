@@ -5,8 +5,14 @@ link.href = "https://code.getmdl.io/1.3.0/material.indigo-blue.min.css";
 link.rel = "stylesheet";
 document.getElementsByTagName("head")[0].appendChild(link);
 
+var link2 = document.createElement("link");
+// link.href = "https://code.getmdl.io/1.3.0/material.indigo-pink.min.css";
+link2.href = "https://fonts.googleapis.com/icon?family=Material+Icons";
+link2.rel = "stylesheet";
+document.getElementsByTagName("head")[0].appendChild(link2);
+
+
 var script = document.createElement("script");
-script.defer = true;
 script.src = "https://code.getmdl.io/1.3.0/material.min.js";
 document.getElementsByTagName("head")[0].appendChild(script);
 
