@@ -157,7 +157,7 @@ function scrape_website(entities_dict, callback_1, callback_2, callback_3){
         return callback_1(entities_dict, scrape_website, callback_2, callback_3);
     };
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.setRequestHeader("X-TextRazor-key", "c18bea3197dc2e01c42b5fd1aa8d9a094a6c83a38a8eb1ee86493f2f");
+    xhttp.setRequestHeader("X-TextRazor-key", "9f9cb1dcc8aef3b922ddcc0857fdc24a352fd42348214cb6956226ee");
     xhttp.send(`url=${url}&extractors=entities`);
 }
 
@@ -267,7 +267,7 @@ function collation(entities_dict, callback_3){
                 it.next();
                 // console.log("iterating...");
             }else{
-                // console.log(final_k_entities);
+                console.log(final_k_entities);
                 callback_3(final_k_entities);
             }
         });
