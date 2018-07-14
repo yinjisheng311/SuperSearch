@@ -131,8 +131,22 @@ function initialiseGraphs(query) {
     top_keywords_title.innerHTML = "Top 5 Relevant Keywords";
     top_keywords_title.setAttribute("style", "font-size:18px;margin-bottom:0;width:fit-content;");
     top_keywords_title.setAttribute("class", "mdl-badge");
+    top_keywords_title.setAttribute("id", "tt1");
     top_keywords_title.setAttribute("data-badge", "i");
+
+    // TOOLTIP FOR BADGE
+    var tooltip1 = document.createElement("div");
+    tooltip1.setAttribute("class", "mdl-tooltip");
+    tooltip1.setAttribute("for", "tt1");
+    tooltip1.innerHTML = `
+    <strong>How did we calculate Relevance?</strong><br>
+    We multiplied the relevance score and the confidence score,
+    so only the entities with high relevance and confidence score
+    will be shown.
+    `;
+
     top_keywords_div.appendChild(top_keywords_title);
+    top_keywords_div.appendChild(tooltip1);
 
     var keywords_table = document.createElement("table");
     keywords_table.setAttribute("class", "mdl-data-table mdl-js-data-table mdl-shadow--2dp");
@@ -161,8 +175,21 @@ function initialiseGraphs(query) {
     barchart_title.innerHTML = "Frequency of Top Keywords";
     barchart_title.setAttribute("style", "font-size:18px;margin-bottom:1rem; width:fit-content;");
     barchart_title.setAttribute("class", "mdl-badge");
+    barchart_title.setAttribute("id", "tt2");
     barchart_title.setAttribute("data-badge", "i");
     barchart_div.appendChild(barchart_title);
+
+    // TOOLTIP FOR BADGE
+    var tooltip2 = document.createElement("div");
+    tooltip2.setAttribute("class", "mdl-tooltip");
+    tooltip2.setAttribute("for", "tt2");
+    tooltip2.innerHTML = `
+    <strong>How did we calculate Frequency?</strong><br>
+    We counted the occurrence of each of the top relevant entities.
+    `;
+
+    barchart_div.appendChild(barchart_title);
+    barchart_div.appendChild(tooltip2);
 
     var bar_chart_canvas = document.createElement("canvas");
     bar_chart_canvas.setAttribute("id", "barChart");
@@ -179,8 +206,21 @@ function initialiseGraphs(query) {
     trends_title.innerHTML = "Interest over Time";
     trends_title.setAttribute("style", "font-size:18px;margin-bottom:0rem;width:fit-content;");
     trends_title.setAttribute("class", "mdl-badge");
+    trends_title.setAttribute("id", "tt3");
     trends_title.setAttribute("data-badge", "i");
+
+    // TOOLTIP FOR BADGE
+    var tooltip3 = document.createElement("div");
+    tooltip3.setAttribute("class", "mdl-tooltip");
+    tooltip3.setAttribute("for", "tt3");
+    tooltip2.innerHTML = `
+    <strong>How did we calculate Interest?</strong><br>
+    This is an embedded Google Trends API that plots the interest of web search
+    of the particular topic against time.
+    `;
     trends_div.appendChild(trends_title);
+    trends_div.appendChild(tooltip3);
+
     container_div.appendChild(trends_div);
     top_result_bar.insertAdjacentElement("afterend", container_div);
 
@@ -370,7 +410,7 @@ function updateContent(json, query) {
     var top_result_bar = document.getElementById("appbar");
     var relation_entity_button = document.createElement("button");
     relation_entity_button.setAttribute("class", "mdl-button mdl-js-button mdl-button--raised");
-    relation_entity_button.innerHTML = "Relationship Graph";
+    relation_entity_button.innerHTML = "Entity-Relationship Graph";
     relation_entity_button.setAttribute("style", "left:150px");
 
     // result_stats_bar.insertAdjacentElement("afterend", relation_entity_button);

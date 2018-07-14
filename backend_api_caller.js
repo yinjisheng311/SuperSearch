@@ -197,7 +197,7 @@ function collation(entities_dict, callback_3){
     for(var i=0;i<num_bins;i++){
         hist[i] = 0;
     }
-    for (var idx = 0; idx<20 && idx < sortable.length;idx++){
+    for (var idx = 0; idx<40 && idx < sortable.length;idx++){
         id = sortable[idx][0];
         arr = sortable[idx][1];
         final_k_entities.push({"entity_name":id, "relevance_score":arr["rel_score"], "confidence_score":arr["con_score"], "overall_score":arr["overall"], "frequency":arr["count"], "url":arr["url"]});
